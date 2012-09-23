@@ -19,7 +19,7 @@ Tokens to look for
 {{= set delimeters special pattern {{=<% %>=}}
 
  */
-public class TemplateParser
+public class Template
 {
     enum State
     {

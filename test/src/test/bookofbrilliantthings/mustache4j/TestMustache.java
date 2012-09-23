@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.bookofbrilliantthings.mustache4j.Mustache;
 import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
-import com.bookofbrilliantthings.mustache4j.TemplateParser;
+import com.bookofbrilliantthings.mustache4j.Template;
 import com.bookofbrilliantthings.mustache4j.util.StringBuilderWriter;
 
 
@@ -23,14 +23,14 @@ public class TestMustache
         public String xfoo;
 
         @MustacheValue
-        public String bar;
+        public int bar;
     }
 
     private void testCorrectTemplate(final String template)
         throws Exception
     {
         final TemplateRecreator recreator = new TemplateRecreator();
-        TemplateParser.parse(recreator, new StringReader(template));
+        Template.parse(recreator, new StringReader(template));
         final String recreatedTemplate = recreator.getTemplate();
         assertEquals(template, recreatedTemplate);
     }
@@ -59,26 +59,26 @@ public class TestMustache
 
         try
         {
-            final HashMap<String, String> hashMap1 = new HashMap<String, String>();
+            final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
             hashMap1.put("foo", "a");
-            hashMap1.put("bar", "b");
+            hashMap1.put("bar", new Integer(3));
+
             final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
             final StringBuilderWriter writer1 = new StringBuilderWriter();
             mustacheRendererH1.render(writer1, hashMap1);
             final String result1 = writer1.toString();
-            assertEquals("    a     b  ", result1);
+            assertEquals("    a     3  ", result1);
 
-/* TODO
-        final MustacheRenderer mustacheRendererM1 = Mustache.compile(new StringReader(template), M1.class);
 
-        final M1 m1 = new M1();
-        m1.xfoo = "a";
-        m1.bar = "b";
+            final M1 m1 = new M1();
+            m1.xfoo = "a";
+            m1.bar = 3;
 
-        final StringBuilderWriter stringWriter = new StringBuilderWriter();
-        //TODO mustacheRendererM1.format(stringWriter, m1);
-        final String result = stringWriter.toString();
-*/
+            final MustacheRenderer mustacheRendererM1 = Mustache.compile(new StringReader(template1), M1.class);
+            final StringBuilderWriter writer2 = new StringBuilderWriter();
+            mustacheRendererM1.render(writer2, m1);
+            final String result2 = writer2.toString();
+            assertEquals("    a     3  ", result2);
         }
         catch(Exception e)
         {

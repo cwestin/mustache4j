@@ -73,8 +73,11 @@ public class FieldRenderer
         }
 
         case OBJECT:
-            throw new RuntimeException("unimplemented");
-            //break;
+        {
+            final Object o2 = field.get(o);
+            writer.write(o2.toString());
+            break;
+        }
 
         case SHORT:
         {
@@ -84,7 +87,7 @@ public class FieldRenderer
         }
 
         case VOID:
-            throw new IllegalStateException("a field can have type void");
+            throw new IllegalStateException("a field cannot have type (void)");
         }
     }
 
