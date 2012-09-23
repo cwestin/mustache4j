@@ -6,8 +6,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import com.bookofbrilliantthings.mustache4j.util.LocatorReader;
-
 
 public class Mustache
 {
@@ -40,7 +38,6 @@ public class Mustache
         extends BaseHandler
     {
         private final HashMap<String, Field> fieldNameMap;
-        private LocatorReader locatorReader;
 
         ObjectHandler(Class<?> forClass)
         {

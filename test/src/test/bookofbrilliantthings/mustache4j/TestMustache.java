@@ -2,7 +2,6 @@ package test.bookofbrilliantthings.mustache4j;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 
