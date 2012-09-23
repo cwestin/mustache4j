@@ -20,6 +20,7 @@ public class FieldRenderer
     public void render(final Writer writer, final Object o)
         throws Exception
     {
+        // we don't check o's type because we've specifically compiled the fragment list for o
         switch(primitiveType)
         {
         case BOOLEAN:
