@@ -2,9 +2,11 @@ package test.bookofbrilliantthings.mustache4j;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.bookofbrilliantthings.mustache4j.Mustache;
@@ -52,8 +54,28 @@ public class TestMustache
         }
     }
 
+    private static void testHashMap(final MustacheRenderer mustacheRenderer,
+            final HashMap<String, ?> hashMap, final String template, final String expected)
+        throws Exception
+    {
+        final StringBuilderWriter stringWriter = new StringBuilderWriter();
+        mustacheRenderer.render(stringWriter, hashMap);
+        final String result = stringWriter.toString();
+        assertEquals(expected, result);
+    }
+
+    private static void testObject(final MustacheRenderer mustacheRenderer,
+            final Object o, final String template, final String expected)
+        throws Exception
+    {
+        final StringBuilderWriter stringWriter = new StringBuilderWriter();
+        mustacheRenderer.render(stringWriter, o);
+        final String result = stringWriter.toString();
+        assertEquals(expected, result);
+    }
+
     @Test
-    public void testSimpleStrings()
+    public void testVariables()
     {
         final String template1 = "    {{foo}}     {{bar}}  ";
 
@@ -64,10 +86,7 @@ public class TestMustache
             hashMap1.put("bar", new Integer(3));
 
             final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
-            final StringBuilderWriter writer1 = new StringBuilderWriter();
-            mustacheRendererH1.render(writer1, hashMap1);
-            final String result1 = writer1.toString();
-            assertEquals("    a     3  ", result1);
+            testHashMap(mustacheRendererH1, hashMap1, template1, "    a     3  ");
 
 
             final M1 m1 = new M1();
@@ -75,10 +94,55 @@ public class TestMustache
             m1.bar = 3;
 
             final MustacheRenderer mustacheRendererM1 = Mustache.compile(new StringReader(template1), M1.class);
-            final StringBuilderWriter writer2 = new StringBuilderWriter();
-            mustacheRendererM1.render(writer2, m1);
-            final String result2 = writer2.toString();
-            assertEquals("    a     3  ", result2);
+            testObject(mustacheRendererM1, m1, template1, "    a     3  ");
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+    }
+
+    private static class M2
+    {
+        @MustacheValue(tagname = "hazPi")
+        public boolean hasPi;
+
+        @MustacheValue
+        public double pi;
+    }
+
+    @Ignore
+    @Test
+    public void testConditionalSections()
+    {
+        final String template1 = "{{#hazPi}}{{pi}}{{/hazPi}}";
+
+        try
+        {
+            final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
+            final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
+
+            testHashMap(mustacheRendererH1, hashMap1, template1, "");
+
+            hashMap1.put("hazPi", Boolean.TRUE);
+            hashMap1.put("pi", new Double(Math.PI));
+
+            testHashMap(mustacheRendererH1, hashMap1, template1, Double.toString(Math.PI));
+
+
+            final M2 m2 = new M2();
+            final MustacheRenderer mustacheRendererM2 = Mustache.compile(new StringReader(template1), M2.class);
+
+            m2.hasPi = false;
+            m2.pi = 0;
+
+            testObject(mustacheRendererM2, m2, template1, "");
+
+            m2.hasPi = true;
+            m2.pi = Math.PI;
+
+            testObject(mustacheRendererM2, m2, template1, Double.toString(Math.PI));
+
         }
         catch(Exception e)
         {

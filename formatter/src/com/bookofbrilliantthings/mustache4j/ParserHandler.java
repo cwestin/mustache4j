@@ -3,6 +3,15 @@ package com.bookofbrilliantthings.mustache4j;
 public class ParserHandler
 {
     /**
+     * Set an optional locator. This can be useful for generating nicer error messages
+     *
+     * @param locator the locator
+     */
+    public void setLocator(Locator locator)
+    {
+    }
+
+    /**
      * A literal appears next. Called whenever a string literal has been completed.
      *
      * The default implementation is to do nothing.
@@ -10,6 +19,7 @@ public class ParserHandler
      * @param literal the value of the literal
      */
     public void literal(String literal)
+        throws MustacheParserException
     {
     }
 
@@ -21,6 +31,7 @@ public class ParserHandler
      * @param varName the name of the variable
      */
     public void variable(String varName)
+        throws MustacheParserException
     {
     }
 
@@ -32,6 +43,7 @@ public class ParserHandler
      * @param secName the name of the section
      */
     public void sectionBegin(String secName, boolean inverted)
+        throws MustacheParserException
     {
     }
 
@@ -43,6 +55,7 @@ public class ParserHandler
      * @param secName the name of the section
      */
     public void sectionEnd(String secName)
+        throws MustacheParserException
     {
     }
 
@@ -54,6 +67,7 @@ public class ParserHandler
      * @param comment the comment text
      */
     public void comment(String comment)
+        throws MustacheParserException
     {
     }
 

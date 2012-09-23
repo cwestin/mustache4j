@@ -6,6 +6,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.bookofbrilliantthings.mustache4j.util.LocatorReader;
+
 
 public class Mustache
 {
@@ -13,6 +15,7 @@ public class Mustache
         extends ParserHandler
     {
         final LinkedList<FragmentRenderer> fragmentList;
+        protected Locator locator;
 
         BaseHandler()
         {
@@ -20,21 +23,16 @@ public class Mustache
         }
 
         @Override
+        public void setLocator(Locator locator)
+        {
+            this.locator = locator;
+        }
+
+        @Override
         public void literal(String literal)
+            throws MustacheParserException
         {
             fragmentList.add(new StringRenderer(literal));
-        }
-
-        @Override
-        public void sectionBegin(String secName, boolean inverted)
-        {
-            throw new RuntimeException("unimplemented");
-        }
-
-        @Override
-        public void sectionEnd(String secName)
-        {
-            throw new RuntimeException("unimplemented");
         }
     }
 
@@ -42,6 +40,7 @@ public class Mustache
         extends BaseHandler
     {
         private final HashMap<String, Field> fieldNameMap;
+        private LocatorReader locatorReader;
 
         ObjectHandler(Class<?> forClass)
         {
@@ -68,6 +67,7 @@ public class Mustache
 
         @Override
         public void variable(String varName)
+            throws MustacheParserException
         {
             // check for a field by this name
             if (fieldNameMap.containsKey(varName))
@@ -76,6 +76,22 @@ public class Mustache
                 return;
             }
 
+            throw new MustacheParserException(locator,
+                    "no MustacheValue named '" + varName + "' in object");
+        }
+
+        @Override
+        public void sectionBegin(String secName, boolean inverted)
+            throws MustacheParserException
+        {
+
+            throw new RuntimeException("unimplemented");
+        }
+
+        @Override
+        public void sectionEnd(String secName)
+            throws MustacheParserException
+        {
             throw new RuntimeException("unimplemented");
         }
     }
@@ -99,8 +115,23 @@ public class Mustache
 
         @Override
         public void variable(String varName)
+            throws MustacheParserException
         {
             fragmentList.add(new HashMapValueRenderer(varName));
+        }
+
+        @Override
+        public void sectionBegin(String secName, boolean inverted)
+            throws MustacheParserException
+        {
+            throw new RuntimeException("unimplemented");
+        }
+
+        @Override
+        public void sectionEnd(String secName)
+            throws MustacheParserException
+        {
+            throw new RuntimeException("unimplemented");
         }
     }
 

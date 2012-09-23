@@ -14,7 +14,7 @@ Tokens to look for
 {{# section: starts a conditional, introduces a list, or a lambda
 {{^ starts an inverted section, the opposite of {{#
 {{/ ends a conditional or list, or inverted section
-}} close tag for tags, comments, partials, conditional/list, coditional/list-end
+}} close tag for tags, comments, partials, conditional/list, conditional/list-end
 
 {{= set delimeters special pattern {{=<% %>=}}
 
@@ -55,8 +55,9 @@ public class Template
         throws IOException, MustacheParserException
     {
         final LocatorReader reader = new LocatorReader(templateReader);
-        int c = -1;
-        final StringBuilder stringBuilder = new StringBuilder();
+        parserHandler.setLocator(reader);
+        int c = -1; // character that has just been read
+        final StringBuilder stringBuilder = new StringBuilder(); // collects characters from literals
         final LinkedList<String> sectionStack = new LinkedList<String>();
         boolean inverted = false;
 

@@ -1,14 +1,20 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import com.bookofbrilliantthings.mustache4j.util.LocatorReader;
-
 public class MustacheParserException
     extends Exception
 {
     private static final long serialVersionUID = 1L;
 
-    MustacheParserException(final LocatorReader locatorReader, final String message)
+    MustacheParserException(final Locator locator, final String message)
     {
-        super("" + locatorReader.getLineCount() + ":" + locatorReader.getLinePos() + " " + message);
+        /*
+         * Somewhat stupidly, Java wouldn't allow me to build this up in a more readable fashion over
+         * several lines using a StringBuilder. It required that super() be the first statement in
+         * the constructor. The only real requirement should be that I call super() before I call any
+         * methods on this.
+         */
+        super((locator != null ?
+                (locator.getLineCount() + ":" + locator.getLinePos() + " ") : "") +
+                message);
     }
 }

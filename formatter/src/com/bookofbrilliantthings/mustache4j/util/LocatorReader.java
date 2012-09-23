@@ -3,8 +3,11 @@ package com.bookofbrilliantthings.mustache4j.util;
 import java.io.IOException;
 import java.io.Reader;
 
+import com.bookofbrilliantthings.mustache4j.Locator;
+
 public class LocatorReader
     extends Reader
+    implements Locator
 {
     private Reader reader;
     private int lineCount;
@@ -17,11 +20,13 @@ public class LocatorReader
         linePos = 0;
     }
 
+    @Override
     public int getLineCount()
     {
         return lineCount;
     }
 
+    @Override
     public int getLinePos()
     {
         return linePos;
