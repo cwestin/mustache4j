@@ -1,5 +1,6 @@
 package test.bookofbrilliantthings.mustache4j;
 
+import com.bookofbrilliantthings.mustache4j.MustacheParserException;
 import com.bookofbrilliantthings.mustache4j.ParserHandler;
 
 public class TemplateRecreator
@@ -19,12 +20,14 @@ public class TemplateRecreator
 
     @Override
     public void literal(String literal)
+        throws MustacheParserException
     {
         stringBuilder.append(literal);
     }
 
     @Override
     public void variable(String varName)
+        throws MustacheParserException
     {
         stringBuilder.append("{{");
         stringBuilder.append(varName);
@@ -33,6 +36,7 @@ public class TemplateRecreator
 
     @Override
     public void sectionBegin(String secName, boolean inverted)
+        throws MustacheParserException
     {
         stringBuilder.append("{{" + (inverted ? '^' : '#'));
         stringBuilder.append(secName);
@@ -41,6 +45,7 @@ public class TemplateRecreator
 
     @Override
     public void sectionEnd(String secName)
+        throws MustacheParserException
     {
         stringBuilder.append("{{/");
         stringBuilder.append(secName);
@@ -49,6 +54,7 @@ public class TemplateRecreator
 
     @Override
     public void comment(String comment)
+        throws MustacheParserException
     {
         stringBuilder.append("{{!");
         stringBuilder.append(comment);
