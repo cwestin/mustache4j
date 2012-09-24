@@ -194,7 +194,7 @@ public class Mustache
                     }
 
                     final LinkedList<FragmentRenderer> newList = new LinkedList<FragmentRenderer>();
-                    push(newList, NestedRenderer.createClosure(newList, field));
+                    push(newList, NestedRenderer.createClosure(newList, field)); // TODO need to push class maps
                     return;
                 }
 
