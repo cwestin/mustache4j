@@ -1,36 +1,38 @@
 package com.bookofbrilliantthings.mustache4j;
 
 import java.io.Writer;
-import java.util.ArrayList;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
-public class SectionRenderer
+
+public abstract class SectionRenderer
+    extends SectionRendererData
     implements FragmentRenderer
 {
-    private final List<FragmentRenderer> fragmentList;
-
-    public SectionRenderer(final List<FragmentRenderer> list)
+    protected SectionRenderer(final List<FragmentRenderer> list, final boolean inverted,
+            final Field field, final Method method)
     {
-        // we clone the list so we can be sure this is immutable
-        fragmentList = new ArrayList<FragmentRenderer>(list);
+        super(list, inverted, field, method);
     }
+
+    public abstract boolean shouldRender(Object o)
+        throws Exception;
+    public abstract Object getObjectToRender(Object o)
+        throws Exception;
 
     @Override
     public void render(final Writer writer, final Object o)
         throws Exception
     {
-        if (o == null)
+        if (!shouldRender(o))
             return;
 
-        if (Iterable.class.isAssignableFrom(o.getClass()))
-            render(writer, (Iterable<?>)o);
-        else
+        final Object objectToRender = getObjectToRender(o);
+        for(FragmentRenderer renderer : fragmentList)
         {
-            for(FragmentRenderer renderer : fragmentList)
-            {
-                renderer.render(writer, o);
-            }
+            renderer.render(writer, objectToRender);
         }
     }
 

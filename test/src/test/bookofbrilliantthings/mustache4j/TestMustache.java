@@ -101,7 +101,7 @@ public class TestMustache
         }
     }
 
-    private static class M2
+    public static class M2
     {
         @MustacheValue(tagname = "hazPi")
         public boolean hasPi;
@@ -110,7 +110,6 @@ public class TestMustache
         public double pi;
     }
 
-    @Ignore
     @Test
     public void testConditionalSections()
     {
@@ -118,6 +117,7 @@ public class TestMustache
 
         try
         {
+/* TODO
             final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
             final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
 
@@ -127,7 +127,7 @@ public class TestMustache
             hashMap1.put("pi", new Double(Math.PI));
 
             testHashMap(mustacheRendererH1, hashMap1, template1, Double.toString(Math.PI));
-
+*/
 
             final M2 m2 = new M2();
             final MustacheRenderer mustacheRendererM2 = Mustache.compile(new StringReader(template1), M2.class);

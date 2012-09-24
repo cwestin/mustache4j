@@ -3,6 +3,7 @@ package com.bookofbrilliantthings.mustache4j;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -12,12 +13,48 @@ public class Mustache
     private static class BaseHandler
         extends ParserHandler
     {
-        final LinkedList<FragmentRenderer> fragmentList;
+        protected LinkedList<FragmentRenderer> fragmentList;
         protected Locator locator;
+
+        private static class Section
+        {
+            final RendererFactory rendererFactory;
+            final LinkedList<FragmentRenderer> previousList;
+
+            Section(RendererFactory rendererFactory, LinkedList<FragmentRenderer> previousList)
+            {
+                this.rendererFactory = rendererFactory;
+                this.previousList = previousList;
+            }
+        }
+
+        private final LinkedList<Section> sectionStack;
 
         BaseHandler()
         {
             fragmentList = new LinkedList<FragmentRenderer>();
+            sectionStack = new LinkedList<Section>();
+        }
+
+        void push(final LinkedList<FragmentRenderer> newList, final RendererFactory rendererFactory)
+        {
+            final Section newSection = new Section(rendererFactory, fragmentList);
+            sectionStack.addFirst(newSection);
+            fragmentList = newList;
+        }
+
+        void pop()
+        {
+            final Section oldSection = sectionStack.peekFirst();
+            if (oldSection == null)
+                throw new IllegalStateException();
+
+            // restore the previous fragment list and pop the stack
+            fragmentList = oldSection.previousList;
+            sectionStack.removeFirst();
+
+            // add the created item to the fragment list
+            fragmentList.add(oldSection.rendererFactory.create());
         }
 
         @Override
@@ -38,11 +75,29 @@ public class Mustache
         extends BaseHandler
     {
         private final HashMap<String, Field> fieldNameMap;
+        private final HashMap<String, Method> methodNameMap;
+
+        private static String getBeanName(final String methodName, final Class<?> forClass)
+            throws MustacheParserException
+        {
+            if (!methodName.startsWith("get"))
+                throw new MustacheParserException(null, "class '" + forClass.getName() +
+                        "', MustacheValue method '" + methodName + "', name does not begin with 'get'");
+
+            if (methodName.length() < 4)
+                throw new MustacheParserException(null, "class '" + forClass.getName() +
+                        "', MustacheValue method '" + methodName + "', name does not have anything after 'get'");
+
+            final String beanName = Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
+            return beanName;
+        }
 
         ObjectHandler(Class<?> forClass)
+            throws MustacheParserException
         {
             super();
             fieldNameMap = new HashMap<String, Field>();
+            methodNameMap = new HashMap<String, Method>();
 
             // analyze the class; we'll build up knowledge of all the fields and methods and their returns
 
@@ -59,6 +114,27 @@ public class Mustache
                         field.getName() : mustacheValue.tagname();
 
                 fieldNameMap.put(tagname, field);
+            }
+
+            // index the methods
+            final Method methods[] = forClass.getMethods(); // only returns public member methods
+            for(Method method : methods)
+            {
+                final MustacheValue mustacheValue = method.getAnnotation(MustacheValue.class);
+                if (mustacheValue == null)
+                    continue;
+
+                final String methodName = method.getName();
+                final Class<?> paramTypes[] = method.getParameterTypes();
+                if (paramTypes.length != 0)
+                    throw new MustacheParserException(null, "class '" + forClass.getName() +
+                            "', MustacheValue method '" + methodName +
+                            "', method must not have any parameters");
+
+                final String tagname = mustacheValue.tagname().isEmpty() ?
+                        getBeanName(methodName, forClass) : mustacheValue.tagname();
+
+                methodNameMap.put(tagname, method);
             }
         }
 
@@ -81,6 +157,24 @@ public class Mustache
         public void sectionBegin(String secName, boolean inverted)
             throws MustacheParserException
         {
+            if (fieldNameMap.containsKey(secName))
+            {
+                final Field field = fieldNameMap.get(secName);
+                final PrimitiveType pt = PrimitiveType.getSwitchType(field.getType());
+                if (pt == PrimitiveType.BOOLEAN)
+                {
+                    final LinkedList<FragmentRenderer> newList = new LinkedList<FragmentRenderer>();
+                    push(newList, ConditionalRenderer.createClosure(newList, inverted, field));
+                    return;
+                }
+
+                if (pt == PrimitiveType.OBJECT)
+                {
+                    // TODO
+                }
+
+                // TODO
+            }
 
             throw new RuntimeException("unimplemented");
         }
@@ -89,7 +183,7 @@ public class Mustache
         public void sectionEnd(String secName)
             throws MustacheParserException
         {
-            throw new RuntimeException("unimplemented");
+            pop();
         }
     }
 
