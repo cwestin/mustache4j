@@ -149,6 +149,18 @@ public class TestMustache
         }
     }
 
+    public static class M3
+    {
+        @MustacheValue
+        public M2 m2;
+
+        @MustacheValue
+        public char flubber;
+
+        @MustacheValue
+        public char sonOfFlubber;
+    }
+
     @Ignore
     @Test
     public void testNestedSections()
@@ -169,20 +181,20 @@ public class TestMustache
             testHashMap(mustacheRendererH1, hashMap1, template1, Double.toString(Math.PI));
 */
 
-            // TODO
+            final MustacheRenderer mustacheRendererM3 = Mustache.compile(new StringReader(template1), M3.class);
+
+            final M3 m3 = new M3();
+            m3.flubber = '\'';
+            m3.sonOfFlubber = '\'';
+            m3.m2 = null;
+
+            testObject(mustacheRendererM3, m3, template1, "''");
+
             final M2 m2 = new M2();
-            final MustacheRenderer mustacheRendererM2 = Mustache.compile(new StringReader(template1), M2.class);
-
-            m2.hasPi = false;
-            m2.pi = 0;
-
-            testObject(mustacheRendererM2, m2, template1, "");
-
             m2.hasPi = true;
             m2.pi = Math.PI;
-
-            testObject(mustacheRendererM2, m2, template1, Double.toString(Math.PI));
-
+            m3.m2 = m2;
+            testObject(mustacheRendererM3, m3, template1, "'" + Double.toString(Math.PI) + "'");
         }
         catch(Exception e)
         {
