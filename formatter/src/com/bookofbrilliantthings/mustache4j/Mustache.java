@@ -212,6 +212,7 @@ public class Mustache
         public void sectionEnd(String secName)
             throws MustacheParserException
         {
+            // TODO need to execute the RendererFactory call here, as per Section.pop() above
             pop();
         }
     }
