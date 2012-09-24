@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
+
 
 public class Mustache
 {
@@ -157,10 +159,13 @@ public class Mustache
         public void sectionBegin(String secName, boolean inverted)
             throws MustacheParserException
         {
+            // check for fields that this section name might refer to
             if (fieldNameMap.containsKey(secName))
             {
                 final Field field = fieldNameMap.get(secName);
-                final PrimitiveType pt = PrimitiveType.getSwitchType(field.getType());
+                final Class<?> fieldType = field.getType();
+                final PrimitiveType pt = PrimitiveType.getSwitchType(fieldType);
+
                 if (pt == PrimitiveType.BOOLEAN)
                 {
                     final LinkedList<FragmentRenderer> newList = new LinkedList<FragmentRenderer>();
@@ -170,12 +175,36 @@ public class Mustache
 
                 if (pt == PrimitiveType.OBJECT)
                 {
-                    // TODO
+                    if (inverted)
+                        throw new MustacheParserException(locator,
+                            "can't create an inverted section for an Object, List<>, or Iterable<>");
+
+                    // check for List<> (follow up with getGenericType())
+                    if (List.class.isAssignableFrom(fieldType))
+                    {
+                        // TODO
+                        throw new RuntimeException("unimplemented");
+                    }
+
+                    // check for Iterable<>
+                    if (Iterable.class.isAssignableFrom(fieldType))
+                    {
+                        // TODO
+                        throw new RuntimeException("unimplemented");
+                    }
+
+                    final LinkedList<FragmentRenderer> newList = new LinkedList<FragmentRenderer>();
+                    push(newList, NestedRenderer.createClosure(newList, field));
+                    return;
                 }
 
-                // TODO
+                throw new MustacheParserException(locator, "section '" + secName +
+                        "': don't know what to do with field '" + field.getName() +
+                        "' of type '" + fieldType.getName() + "'");
             }
 
+            // check for methods this section name might refer to
+            // TODO
             throw new RuntimeException("unimplemented");
         }
 

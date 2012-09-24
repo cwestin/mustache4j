@@ -148,4 +148,46 @@ public class TestMustache
             fail(e.toString());
         }
     }
+
+    @Ignore
+    @Test
+    public void testNestedSections()
+    {
+        final String template1 = "{{flubber}}{{#m2}}{{#hazPi}}{{pi}}{{/hazPi}}{{/m2}}{{sonOfFlubber}}";
+
+        try
+        {
+/* TODO
+            final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
+            final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
+
+            testHashMap(mustacheRendererH1, hashMap1, template1, "");
+
+            hashMap1.put("hazPi", Boolean.TRUE);
+            hashMap1.put("pi", new Double(Math.PI));
+
+            testHashMap(mustacheRendererH1, hashMap1, template1, Double.toString(Math.PI));
+*/
+
+            // TODO
+            final M2 m2 = new M2();
+            final MustacheRenderer mustacheRendererM2 = Mustache.compile(new StringReader(template1), M2.class);
+
+            m2.hasPi = false;
+            m2.pi = 0;
+
+            testObject(mustacheRendererM2, m2, template1, "");
+
+            m2.hasPi = true;
+            m2.pi = Math.PI;
+
+            testObject(mustacheRendererM2, m2, template1, Double.toString(Math.PI));
+
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+    }
+
 }
