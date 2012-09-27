@@ -32,7 +32,14 @@ public class HashMapValueRenderer
         if (o == null)
             return;
 
-        // if the object is a primitive
+        // if it's a boxed primitive, write o.toString()
+        // if it's an object
+        // -- check for List<T>
+        // -- check for Iterable<T>
+        // -- check for HashMap<String, ?>
+        // -- create a renderer for the object -- but need a new template too
+
+        // if the object is a boxed primitive
         writer.write(o.toString());
     }
 }

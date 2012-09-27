@@ -3,7 +3,6 @@ package test.bookofbrilliantthings.mustache4j;
 import static org.junit.Assert.*;
 
 import java.io.StringReader;
-import java.util.HashMap;
 
 import org.junit.Test;
 
@@ -51,6 +50,7 @@ public class TestMustache
         }
     }
 
+/* TODO
     private static void testHashMap(final MustacheRenderer mustacheRenderer,
             final HashMap<String, ?> hashMap, final String template, final String expected)
         throws Exception
@@ -60,6 +60,7 @@ public class TestMustache
         final String result = stringWriter.toString();
         assertEquals(expected, result);
     }
+*/
 
     private static void testObject(final MustacheRenderer mustacheRenderer,
             final Object o, final String template, final String expected)
@@ -78,13 +79,14 @@ public class TestMustache
 
         try
         {
+/* TODO See Mustache.java
             final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
             hashMap1.put("foo", "a");
             hashMap1.put("bar", new Integer(3));
 
             final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
             testHashMap(mustacheRendererH1, hashMap1, template1, "    a     3  ");
-
+*/
 
             final M1 m1 = new M1();
             m1.xfoo = "a";
@@ -115,7 +117,7 @@ public class TestMustache
 
         try
         {
-/* TODO
+/* TODO See Mustache.java
             final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
             final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
 
@@ -166,7 +168,7 @@ public class TestMustache
 
         try
         {
-/* TODO
+/* TODO See Mustache.java
             final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
             final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
 

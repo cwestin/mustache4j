@@ -228,6 +228,16 @@ public class Mustache
         return new ObjectRenderer(fragmentList, forClass);
     }
 
+/* DISABLED
+    The dynamism that this introduces makes it very hard to deal with efficiently, because we essentially
+    have to check everything as we render the template. In the Object case above, we don't have to do that
+    because we know the objects' types at compile time. If HashMapRenderer and HashMapValueRenderer encounter
+    an Object, they'll have to compile a renderer for it on the fly, since we can't rely on that key always
+    having that type of value.
+
+    For my purposes, I'm only interested in Object rendering, because I plan to use object implementation to
+    lazily fetch database fields, so I'm not going to go down this path for now.
+
     private static class HashMapHandler
         extends BaseHandler
     {
@@ -272,4 +282,5 @@ public class Mustache
 
         return new HashMapRenderer(fragmentList);
     }
+*/
 }
