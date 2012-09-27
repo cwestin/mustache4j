@@ -144,7 +144,11 @@ public class Mustache
 
             if (methodNameMap.containsKey(varName))
             {
-                fragmentList.add(new MethodReturnRenderer(methodNameMap.get(varName)));
+                final Method method = methodNameMap.get(varName);
+
+                // TODO if it has the @MustacheParallel annotation, set up a Future for it
+
+                fragmentList.add(new MethodReturnRenderer(method));
                 return;
             }
 
