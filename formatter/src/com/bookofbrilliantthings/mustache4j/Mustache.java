@@ -152,12 +152,12 @@ public class Mustache
                 if (pt == PrimitiveType.BOOLEAN)
                 {
                     final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
-                    final ObjectHandler conditionalSection =
+                    final ObjectHandler objectHandler =
                             new ObjectHandler(fragmentList, forClass,
                                     ConditionalRenderer.createFactory(fragmentList, inverted, field),
                                     stackingParserHandler);
 
-                    stackingParserHandler.push(conditionalSection);
+                    stackingParserHandler.push(objectHandler);
                     return;
                 }
 
@@ -170,7 +170,14 @@ public class Mustache
                     // check for List<T> (follow up with getGenericType())
                     if (List.class.isAssignableFrom(fieldType))
                     {
-                        // TODO
+/* TODO
+                        final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+                        final ObjectHandler objectHandler = new ObjectHandler(fragmentList, x,
+                                ListRenderer.createFactory(fragmentList, field), stackingParserHandler);
+
+                        stackingParserHandler.push(objectHandler);
+                        return;
+ */
                         throw new RuntimeException("unimplemented");
                     }
 
@@ -182,6 +189,9 @@ public class Mustache
                     }
 
                     // check for HashMap<String, T>
+                    // TODO
+
+                    // check for arrays
                     // TODO
 
                     // reject other generics for the time being

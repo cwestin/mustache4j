@@ -3,7 +3,10 @@ package test.bookofbrilliantthings.mustache4j;
 import static org.junit.Assert.*;
 
 import java.io.StringReader;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.bookofbrilliantthings.mustache4j.Mustache;
@@ -201,4 +204,51 @@ public class TestMustache
         }
     }
 
+    public static class M4
+    {
+        @MustacheValue
+        boolean showList;
+
+        @MustacheValue
+        List<M2> listM2;
+    }
+
+    @Ignore // TODO
+    @Test
+    public void testLists()
+    {
+        final String template1 = "{{#showList}}{{#listM2}}{{pi}}\n{{/listM2}}{{/showList}}";
+
+        try
+        {
+            final MustacheRenderer mustacheRenderer = Mustache.compile(new StringReader(template1), M4.class);
+
+            final M4 m4 = new M4();
+
+            // start out without even showing the list
+            testObject(mustacheRenderer, m4, template1, "");
+
+            // now try showing the list, but the list doesn't exist, so we still should see nothing
+            m4.showList = true;
+            testObject(mustacheRenderer, m4, template1, "");
+
+            // add a list, but leave it empty
+            m4.listM2 = new LinkedList<M2>();
+            testObject(mustacheRenderer, m4, template1, "");
+
+            // now put things on the list
+            M2 m2 = new M2();
+            m2.pi = Math.PI;
+            m4.listM2.add(m2);
+            m2 = new M2();
+            m2.pi = Math.E;
+            m4.listM2.add(m2);
+            testObject(mustacheRenderer, m4, template1,
+                    Double.toString(Math.PI) + "\n" + Double.toString(Math.E) + "\n");
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+    }
 }
