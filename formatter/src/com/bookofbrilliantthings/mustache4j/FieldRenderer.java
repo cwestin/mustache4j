@@ -12,7 +12,7 @@ public class FieldRenderer
     public FieldRenderer(final Field field)
     {
         this.field = field;
-        final Class<?> theClass = field.getClass(); // TODO what if it's type is given by a TypeVariable?
+        final Class<?> theClass = field.getClass(); // TODO what if its type is given by a TypeVariable?
         primitiveType = PrimitiveType.getSwitchType(theClass);
     }
 
