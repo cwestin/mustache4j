@@ -190,7 +190,7 @@ public class Mustache
                     final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
                     final ObjectHandler objectHandler =
                             new ObjectHandler(fragmentList, fieldType,
-                                    NestedRenderer.createFactory(fragmentList, field),
+                                    ChildObjectRenderer.createFactory(fragmentList, field),
                                     stackingParserHandler);
                     stackingParserHandler.push(objectHandler);
                     return;
