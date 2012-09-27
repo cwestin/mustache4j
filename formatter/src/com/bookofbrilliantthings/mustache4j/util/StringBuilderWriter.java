@@ -81,7 +81,7 @@ public class StringBuilderWriter
         if (isClosed)
             throw new IOException(ALREADY_CLOSED);
 
-        stringBuilder.append(c);
+        stringBuilder.append((char)c);
     }
 
     @Override

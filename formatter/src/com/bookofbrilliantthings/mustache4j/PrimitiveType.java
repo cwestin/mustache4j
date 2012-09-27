@@ -3,6 +3,7 @@ package com.bookofbrilliantthings.mustache4j;
 enum PrimitiveType
 {
     OBJECT,
+    STRING,
     VOID,
     BOOLEAN,
     BYTE,
@@ -16,7 +17,12 @@ enum PrimitiveType
     public static PrimitiveType getSwitchType(final Class<?> theClass)
     {
         if (!theClass.isPrimitive())
+        {
+            if (theClass.equals(String.class))
+                return STRING;
+
             return OBJECT;
+        }
 
         if (theClass == void.class)
             return VOID;

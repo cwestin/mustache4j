@@ -11,9 +11,12 @@ public class FieldRenderer
 
     public FieldRenderer(final Field field)
     {
-        this.field = field;
-        final Class<?> theClass = field.getClass(); // TODO what if its type is given by a TypeVariable?
+        final Class<?> theClass = field.getType();
         primitiveType = PrimitiveType.getSwitchType(theClass);
+        if (primitiveType == PrimitiveType.OBJECT)
+            throw new RuntimeException("only primitive type and String fields are supported for now (" + theClass.getName() + ")"); // TODO
+
+        this.field = field;
     }
 
     @Override
@@ -83,6 +86,13 @@ public class FieldRenderer
         {
             final short v = field.getShort(o);
             writer.write(Short.toString(v));
+            break;
+        }
+
+        case STRING:
+        {
+            final String s = (String)field.get(o);
+            writer.write(s);
             break;
         }
 

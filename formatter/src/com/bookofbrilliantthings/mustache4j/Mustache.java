@@ -109,12 +109,20 @@ public class Mustache
                 if (mustacheValue == null)
                     continue;
 
+                // check that the method doesn't require parameters
                 final String methodName = method.getName();
                 final Class<?> paramTypes[] = method.getParameterTypes();
                 if (paramTypes.length != 0)
                     throw new MustacheParserException(null, "class '" + forClass.getName() +
                             "', MustacheValue method '" + methodName +
                             "', method must not have any parameters");
+
+                // check that the method returns a value
+                final Class<?> returnType = method.getReturnType();
+                if (returnType == void.class)
+                    throw new MustacheParserException(null, "class '" + forClass.getName() +
+                            "', MustacheValue method '" + methodName +
+                            "', must return a value");
 
                 final String tagname = mustacheValue.tagname().isEmpty() ?
                         getBeanName(methodName, forClass) : mustacheValue.tagname();
@@ -131,6 +139,12 @@ public class Mustache
             if (fieldNameMap.containsKey(varName))
             {
                 fragmentList.add(new FieldRenderer(fieldNameMap.get(varName)));
+                return;
+            }
+
+            if (methodNameMap.containsKey(varName))
+            {
+                fragmentList.add(new MethodReturnRenderer(methodNameMap.get(varName)));
                 return;
             }
 
@@ -212,8 +226,15 @@ public class Mustache
             }
 
             // check for methods this section name might refer to
-            // TODO
-            throw new RuntimeException("unimplemented");
+            if (methodNameMap.containsKey(secName))
+            {
+                // TODO
+                throw new RuntimeException("unimplemented");
+            }
+
+            throw new MustacheParserException(locator,
+                    "there is no member or method matching section name \"" +
+                    secName + "\"");
         }
 
         @Override

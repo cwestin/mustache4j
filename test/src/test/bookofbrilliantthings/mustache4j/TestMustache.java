@@ -251,4 +251,35 @@ public class TestMustache
             fail(e.toString());
         }
     }
+
+    public static class M5
+    {
+        @MustacheValue
+        int getFoo()
+        {
+            return 42;
+        }
+
+        @MustacheValue(tagname = "baz")
+        String getBar()
+        {
+            return "bar";
+        }
+    }
+
+    @Test
+    public void testPrimitiveFunctions()
+    {
+        try
+        {
+            final String template1 = "{{baz}} {{foo}}";
+            final MustacheRenderer mustacheRenderer = Mustache.compile(new StringReader(template1), M5.class);
+            final M5 m5 = new M5();
+            testObject(mustacheRenderer, m5, template1, "bar 42");
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+    }
 }
