@@ -32,6 +32,7 @@ public class HashMapValueRenderer
         if (o == null)
             return;
 
+        // if the object is a primitive
         writer.write(o.toString());
     }
 }

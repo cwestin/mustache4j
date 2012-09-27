@@ -1,51 +1,53 @@
 package com.bookofbrilliantthings.mustache4j;
 
+import java.io.Writer;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
 public class NestedRenderer
-    extends SectionRenderer
+    implements FragmentRenderer
 {
-    private static class MyFactoryClosure
-        extends FactoryClosure
+    private final ObjectRenderer objectRenderer;
+    private final Field field;
+
+    public NestedRenderer(final List<FragmentRenderer> fragmentList, final Field field)
     {
-        MyFactoryClosure(final List<FragmentRenderer> fragmentList, final Field field)
+        objectRenderer = new ObjectRenderer(fragmentList, field.getType());
+        this.field = field;
+    }
+
+    @Override
+    public void render(final Writer writer, final Object o)
+        throws Exception
+    {
+        final Object childObject = field.get(o);
+        if (childObject == null)
+            return;
+
+        objectRenderer.render(writer, childObject);
+    }
+
+    private static class MyRendererFactory
+        implements RendererFactory
+    {
+        private final List<FragmentRenderer> fragmentList;
+        private final Field field;
+
+        MyRendererFactory(List<FragmentRenderer> fragmentList, Field field)
         {
-            super(fragmentList, false, field, null);
+            this.fragmentList = fragmentList;
+            this.field = field;
         }
 
         @Override
-        public FragmentRenderer create()
+        public FragmentRenderer createRenderer()
         {
             return new NestedRenderer(fragmentList, field);
         }
     }
 
-    public static RendererFactory createClosure(final List<FragmentRenderer> fragmentList, final Field field)
+    public static RendererFactory createFactory(final List<FragmentRenderer> fragmentList, final Field field)
     {
-        return new MyFactoryClosure(fragmentList, field);
-    }
-
-    public NestedRenderer(final List<FragmentRenderer> fragmentList, final Field field)
-    {
-        super(new ArrayList<FragmentRenderer>(fragmentList), false, field, null);
-        assert PrimitiveType.getSwitchType(field.getType()) == PrimitiveType.OBJECT;
-    }
-
-    @Override
-    public boolean shouldRender(Object o)
-        throws Exception
-    {
-        final Object childObject = field.get(o);
-        return (childObject != null);
-    }
-
-    @Override
-    public Object getObjectToRender(Object o)
-        throws Exception
-    {
-        final Object childObject = field.get(o);
-        return childObject;
+        return new MyRendererFactory(fragmentList, field);
     }
 }

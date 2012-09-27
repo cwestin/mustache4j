@@ -5,17 +5,16 @@ import java.util.LinkedList;
 public class StackingParserHandler
     extends ParserHandler
 {
-    private ParserHandler topHandler;
-    private final LinkedList<ParserHandler> handlerStack;
+    private StackableParserHandler topHandler;
+    private final LinkedList<StackableParserHandler> handlerStack;
     private Locator locator;
 
-    public StackingParserHandler(ParserHandler firstHandler)
+    public StackingParserHandler()
     {
-        topHandler = firstHandler;
-        handlerStack = new LinkedList<ParserHandler>();
+        handlerStack = new LinkedList<StackableParserHandler>();
     }
 
-    public void push(ParserHandler parserHandler)
+    public void push(StackableParserHandler parserHandler)
     {
         handlerStack.addFirst(topHandler);
         topHandler = parserHandler;
@@ -24,12 +23,13 @@ public class StackingParserHandler
             topHandler.setLocator(locator);
     }
 
-    public void pop()
+    public void pop(final FragmentRenderer fragmentRenderer)
     {
-        if (handlerStack.size() == 0)
+        if (handlerStack.size() == 1)
             throw new IllegalStateException();
 
         topHandler = handlerStack.removeFirst();
+        topHandler.resume(fragmentRenderer);
     }
 
     @Override
@@ -71,5 +71,12 @@ public class StackingParserHandler
         throws MustacheParserException
     {
         topHandler.comment(comment);
+    }
+
+    @Override
+    public void done()
+        throws MustacheParserException
+    {
+        topHandler.done();
     }
 }

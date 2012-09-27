@@ -14,5 +14,5 @@ public abstract class FactoryClosure
         super(fragmentList, inverted, field, method);
     }
 
-    public abstract FragmentRenderer create();
+    public abstract FragmentRenderer createRenderer();
 }

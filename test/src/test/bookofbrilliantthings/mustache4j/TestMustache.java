@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.io.StringReader;
 import java.util.HashMap;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.bookofbrilliantthings.mustache4j.Mustache;
@@ -13,7 +12,6 @@ import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
 import com.bookofbrilliantthings.mustache4j.Template;
 import com.bookofbrilliantthings.mustache4j.util.StringBuilderWriter;
-
 
 public class TestMustache
 {
@@ -161,7 +159,6 @@ public class TestMustache
         public char sonOfFlubber;
     }
 
-    @Ignore
     @Test
     public void testNestedSections()
     {

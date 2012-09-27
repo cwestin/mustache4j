@@ -13,50 +13,30 @@ import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 public class Mustache
 {
     private static class BaseHandler
-        extends ParserHandler
+        extends StackableParserHandler
     {
-        protected LinkedList<FragmentRenderer> fragmentList;
+        final protected LinkedList<FragmentRenderer> fragmentList;
         protected Locator locator;
+        final private RendererFactory rendererFactory;
+        final protected StackingParserHandler stackingParserHandler;
 
-        private static class Section
+        protected BaseHandler(LinkedList<FragmentRenderer> fragmentList, RendererFactory rendererFactory,
+                StackingParserHandler stackingParserHandler)
         {
-            final RendererFactory rendererFactory;
-            final LinkedList<FragmentRenderer> previousList;
-
-            Section(RendererFactory rendererFactory, LinkedList<FragmentRenderer> previousList)
-            {
-                this.rendererFactory = rendererFactory;
-                this.previousList = previousList;
-            }
+            this.fragmentList = fragmentList;
+            this.rendererFactory = rendererFactory;
+            this.stackingParserHandler = stackingParserHandler;
         }
 
-        private final LinkedList<Section> sectionStack;
-
-        BaseHandler()
+        FragmentRenderer createRenderer()
         {
-            fragmentList = new LinkedList<FragmentRenderer>();
-            sectionStack = new LinkedList<Section>();
+            return rendererFactory.createRenderer();
         }
 
-        void push(final LinkedList<FragmentRenderer> newList, final RendererFactory rendererFactory)
+        @Override
+        public void resume(FragmentRenderer fragmentRenderer)
         {
-            final Section newSection = new Section(rendererFactory, fragmentList);
-            sectionStack.addFirst(newSection);
-            fragmentList = newList;
-        }
-
-        void pop()
-        {
-            final Section oldSection = sectionStack.peekFirst();
-            if (oldSection == null)
-                throw new IllegalStateException();
-
-            // restore the previous fragment list and pop the stack
-            fragmentList = oldSection.previousList;
-            sectionStack.removeFirst();
-
-            // add the created item to the fragment list
-            fragmentList.add(oldSection.rendererFactory.create());
+            fragmentList.add(fragmentRenderer);
         }
 
         @Override
@@ -76,8 +56,9 @@ public class Mustache
     private static class ObjectHandler
         extends BaseHandler
     {
-        private final HashMap<String, Field> fieldNameMap;
-        private final HashMap<String, Method> methodNameMap;
+        protected final HashMap<String, Field> fieldNameMap;
+        protected final HashMap<String, Method> methodNameMap;
+        protected final Class<?> forClass;
 
         private static String getBeanName(final String methodName, final Class<?> forClass)
             throws MustacheParserException
@@ -94,12 +75,14 @@ public class Mustache
             return beanName;
         }
 
-        ObjectHandler(Class<?> forClass)
+        ObjectHandler(final LinkedList<FragmentRenderer> fragmentList, Class<?> forClass,
+                RendererFactory rendererFactory, StackingParserHandler stackingParserHandler)
             throws MustacheParserException
         {
-            super();
+            super(fragmentList, rendererFactory, stackingParserHandler);
             fieldNameMap = new HashMap<String, Field>();
             methodNameMap = new HashMap<String, Method>();
+            this.forClass = forClass;
 
             // analyze the class; we'll build up knowledge of all the fields and methods and their returns
 
@@ -168,8 +151,13 @@ public class Mustache
 
                 if (pt == PrimitiveType.BOOLEAN)
                 {
-                    final LinkedList<FragmentRenderer> newList = new LinkedList<FragmentRenderer>();
-                    push(newList, ConditionalRenderer.createClosure(newList, inverted, field));
+                    final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+                    final ObjectHandler conditionalSection =
+                            new ObjectHandler(fragmentList, forClass,
+                                    ConditionalRenderer.createFactory(fragmentList, inverted, field),
+                                    stackingParserHandler);
+
+                    stackingParserHandler.push(conditionalSection);
                     return;
                 }
 
@@ -179,22 +167,32 @@ public class Mustache
                         throw new MustacheParserException(locator,
                             "can't create an inverted section for an Object, List<>, or Iterable<>");
 
-                    // check for List<> (follow up with getGenericType())
+                    // check for List<T> (follow up with getGenericType())
                     if (List.class.isAssignableFrom(fieldType))
                     {
                         // TODO
                         throw new RuntimeException("unimplemented");
                     }
 
-                    // check for Iterable<>
+                    // check for Iterable<T>
                     if (Iterable.class.isAssignableFrom(fieldType))
                     {
                         // TODO
                         throw new RuntimeException("unimplemented");
                     }
 
-                    final LinkedList<FragmentRenderer> newList = new LinkedList<FragmentRenderer>();
-                    push(newList, NestedRenderer.createClosure(newList, field)); // TODO need to push class maps
+                    // check for HashMap<String, T>
+                    // TODO
+
+                    // reject other generics for the time being
+                    // TODO detect these
+
+                    final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+                    final ObjectHandler objectHandler =
+                            new ObjectHandler(fragmentList, fieldType,
+                                    NestedRenderer.createFactory(fragmentList, field),
+                                    stackingParserHandler);
+                    stackingParserHandler.push(objectHandler);
                     return;
                 }
 
@@ -212,26 +210,32 @@ public class Mustache
         public void sectionEnd(String secName)
             throws MustacheParserException
         {
-            // TODO need to execute the RendererFactory call here, as per Section.pop() above
-            pop();
+            stackingParserHandler.pop(createRenderer());
         }
     }
 
     public static MustacheRenderer compile(final Reader templateReader, final Class<?> forClass)
         throws IOException, MustacheParserException
     {
-        final ObjectHandler objectHandler = new ObjectHandler(forClass);
-        Template.parse(objectHandler, templateReader);
+        final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+        final StackingParserHandler stackingParserHandler = new StackingParserHandler();
+        final ObjectHandler objectHandler =
+                new ObjectHandler(fragmentList, forClass, null, stackingParserHandler);
+        stackingParserHandler.push(objectHandler);
 
-        return new MustacheRenderer(objectHandler.fragmentList, forClass);
+        Template.parse(stackingParserHandler, templateReader);
+
+        return new ObjectRenderer(fragmentList, forClass);
     }
 
     private static class HashMapHandler
         extends BaseHandler
     {
-        HashMapHandler()
+        HashMapHandler(LinkedList<FragmentRenderer> fragmentList,
+                RendererFactory rendererFactory,
+                StackingParserHandler stackingParserHandler)
         {
-            super();
+            super(fragmentList, rendererFactory, stackingParserHandler);
         }
 
         @Override
@@ -259,9 +263,13 @@ public class Mustache
     public static MustacheRenderer compileForHashMap(final Reader templateReader)
         throws IOException, MustacheParserException
     {
-        final HashMapHandler hashMapHandler = new HashMapHandler();
-        Template.parse(hashMapHandler, templateReader);
+        final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+        final StackingParserHandler stackingParserHandler = new StackingParserHandler();
+        final HashMapHandler hashMapHandler = new HashMapHandler(fragmentList, null, stackingParserHandler);
 
-        return new MustacheRenderer(hashMapHandler.fragmentList, null);
+        stackingParserHandler.push(hashMapHandler);
+        Template.parse(stackingParserHandler, templateReader);
+
+        return new HashMapRenderer(fragmentList);
     }
 }

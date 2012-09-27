@@ -1,53 +1,60 @@
 package com.bookofbrilliantthings.mustache4j;
 
+import java.io.Writer;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
-
 public class ConditionalRenderer
-    extends SectionRenderer
+    implements FragmentRenderer
 {
-    private static class MyFactoryClosure
-        extends FactoryClosure
+    private final ObjectRenderer objectRenderer;
+    private final boolean inverted;
+    private final Field field;
+
+    public ConditionalRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
+            final Field booleanField)
     {
-        MyFactoryClosure(final List<FragmentRenderer> fragmentList, final boolean inverted, final Field field)
+        assert booleanField.getType() == boolean.class;
+        objectRenderer = new ObjectRenderer(fragmentList, booleanField.getDeclaringClass());
+        this.inverted = inverted;
+        this.field = booleanField;
+    }
+
+    @Override
+    public void render(final Writer writer, final Object o)
+        throws Exception
+    {
+        final boolean b = field.getBoolean(o) ^ inverted;
+        if (!b)
+            return;
+
+        objectRenderer.render(writer, o);
+    }
+
+    private static class MyFactory
+        implements RendererFactory
+    {
+        private final List<FragmentRenderer> fragmentList;
+        private final boolean inverted;
+        private final Field field;
+
+        MyFactory(final List<FragmentRenderer> fragmentList, final boolean inverted, final Field field)
         {
-            super(fragmentList, inverted, field, null);
+            this.fragmentList = fragmentList;
+            this.inverted = inverted;
+            this.field = field;
         }
 
         @Override
-        public FragmentRenderer create()
+        public FragmentRenderer createRenderer()
         {
             return new ConditionalRenderer(fragmentList, inverted, field);
         }
     }
 
-    public static RendererFactory createClosure(final List<FragmentRenderer> fragmentList,
+    public static RendererFactory createFactory(final List<FragmentRenderer> fragmentList,
             final boolean inverted, final Field booleanField)
     {
-        return new MyFactoryClosure(fragmentList, inverted, booleanField);
-    }
-
-    public ConditionalRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
-            final Field booleanField)
-    {
-        super(new ArrayList<FragmentRenderer>(fragmentList), inverted, booleanField, null);
-        assert booleanField.getType() == boolean.class;
-    }
-
-    @Override
-    public boolean shouldRender(final Object o)
-        throws Exception
-    {
-        final boolean b = field.getBoolean(o);
-        return b ^ inverted;
-    }
-
-    @Override
-    public Object getObjectToRender(final Object o)
-        throws Exception
-    {
-        return o;
+        return new MyFactory(fragmentList, inverted, booleanField);
     }
 }

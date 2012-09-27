@@ -77,6 +77,7 @@ public class ParserHandler
      * The default implementation is to do nothing.
      */
     public void done()
+        throws MustacheParserException
     {
     }
 }
