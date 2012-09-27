@@ -255,13 +255,13 @@ public class TestMustache
     public static class M5
     {
         @MustacheValue
-        int getFoo()
+        public int getFoo()
         {
             return 42;
         }
 
         @MustacheValue(tagname = "baz")
-        String getBar()
+        public String getBar()
         {
             return "bar";
         }
