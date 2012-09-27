@@ -13,7 +13,7 @@ import com.bookofbrilliantthings.mustache4j.Mustache;
 import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
 import com.bookofbrilliantthings.mustache4j.Template;
-import com.bookofbrilliantthings.mustache4j.util.StringBuilderWriter;
+import com.bookofbrilliantthings.mustache4j.util.StringWriter;
 
 public class TestMustache
 {
@@ -69,7 +69,7 @@ public class TestMustache
             final Object o, final String template, final String expected)
         throws Exception
     {
-        final StringBuilderWriter stringWriter = new StringBuilderWriter();
+        final StringWriter stringWriter = new StringWriter();
         mustacheRenderer.render(stringWriter, o);
         final String result = stringWriter.toString();
         assertEquals(expected, result);
