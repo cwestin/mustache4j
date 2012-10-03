@@ -196,14 +196,14 @@ public class Mustache
                         stackingParserHandler.push(objectHandler);
                         return;
  */
-                        throw new RuntimeException("unimplemented");
+                        throw new RuntimeException("List<T> unimplemented");
                     }
 
                     // check for Iterable<T>
                     if (Iterable.class.isAssignableFrom(fieldType))
                     {
                         // TODO
-                        throw new RuntimeException("unimplemented");
+                        throw new RuntimeException("Iterable<T> unimplemented");
                     }
 
                     // check for HashMap<String, T>
@@ -233,7 +233,7 @@ public class Mustache
             if (methodNameMap.containsKey(secName))
             {
                 // TODO
-                throw new RuntimeException("unimplemented");
+                throw new RuntimeException("{{# for functions unimplemented");
             }
 
             throw new MustacheParserException(locator,
