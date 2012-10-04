@@ -282,4 +282,57 @@ public class TestMustache
             fail(e.toString());
         }
     }
+
+    public static class M6
+    {
+        public boolean showPi;
+        public boolean showE;
+
+        @MustacheValue
+        public boolean getShowPi()
+        {
+            return showPi;
+        }
+
+        @MustacheValue
+        public double getPi()
+        {
+            return Math.PI;
+        }
+
+        @MustacheValue
+        public boolean getDontShowE()
+        {
+            return !showE;
+        }
+
+        @MustacheValue
+        public double getE()
+        {
+            return Math.E;
+        }
+    }
+
+    @Test
+    public void testConditionalFunctions()
+    {
+        try
+        {
+            final String template1 = "{{#showPi}}{{pi}}{{/showPi}}{{^dontShowE}}{{e}}{{/dontShowE}}";
+            final MustacheRenderer mustacheRenderer = Mustache.compile(new StringReader(template1), M6.class);
+            final M6 m6 = new M6();
+
+            m6.showPi = true;
+            m6.showE = false;
+            testObject(mustacheRenderer, m6, template1, Double.toString(Math.PI));
+
+            m6.showPi = false;
+            m6.showE = true;
+            testObject(mustacheRenderer, m6, template1, Double.toString(Math.E));
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+    }
 }

@@ -233,9 +233,23 @@ public class Mustache
             if (methodNameMap.containsKey(secName))
             {
                 final Method method = methodNameMap.get(secName);
+                final Class<?> returnType = method.getReturnType();
+                final PrimitiveType pt = PrimitiveType.getSwitchType(returnType);
+
+                if (pt == PrimitiveType.BOOLEAN)
+                {
+                    final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+                    final ObjectHandler objectHandler =
+                            new ObjectHandler(fragmentList, forClass,
+                                    ConditionalMethodRenderer.createFactory(fragmentList, inverted, method),
+                                    stackingParserHandler);
+
+                    stackingParserHandler.push(objectHandler);
+                    return;
+                }
 
                 // TODO
-                throw new RuntimeException("{{# for functions unimplemented");
+                throw new RuntimeException("{{#/{{^ for non-boolean functions unimplemented");
             }
 
             throw new MustacheParserException(locator,
