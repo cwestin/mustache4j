@@ -20,6 +20,12 @@ public class FieldSource
     }
 
     @Override
+    public VariableRenderer createVariableRenderer()
+    {
+        return new FieldRenderer(field);
+    }
+
+    @Override
     public RendererFactory createConditionalRendererFactory(
             LinkedList<FragmentRenderer> fragmentList, boolean inverted)
     {

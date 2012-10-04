@@ -58,6 +58,7 @@ public class Mustache
     {
         protected final HashMap<String, Field> fieldNameMap;
         protected final HashMap<String, Method> methodNameMap;
+        protected final HashMap<String, ValueSource> valueNameMap;
         protected final Class<?> forClass;
 
         private static String getBeanName(final String methodName, final Class<?> forClass)
@@ -82,6 +83,7 @@ public class Mustache
             super(fragmentList, rendererFactory, stackingParserHandler);
             fieldNameMap = new HashMap<String, Field>();
             methodNameMap = new HashMap<String, Method>();
+            valueNameMap = new HashMap<String, ValueSource>();
             this.forClass = forClass;
 
             // analyze the class; we'll build up knowledge of all the fields and methods and their returns
@@ -99,6 +101,7 @@ public class Mustache
                         field.getName() : mustacheValue.tagname();
 
                 fieldNameMap.put(tagname, field);
+                valueNameMap.put(tagname, new FieldSource(field));
             }
 
             // index the methods
@@ -128,6 +131,7 @@ public class Mustache
                         getBeanName(methodName, forClass) : mustacheValue.tagname();
 
                 methodNameMap.put(tagname, method);
+                valueNameMap.put(tagname,  new MethodSource(method));
             }
         }
 
@@ -135,25 +139,13 @@ public class Mustache
         public void variable(String varName)
             throws MustacheParserException
         {
-            // check for a field by this name
-            if (fieldNameMap.containsKey(varName))
-            {
-                fragmentList.add(new FieldRenderer(fieldNameMap.get(varName)));
-                return;
-            }
+            if (!valueNameMap.containsKey(varName))
+                throw new MustacheParserException(locator,
+                        "no MustacheValue named '" + varName + "' in object");
 
-            if (methodNameMap.containsKey(varName))
-            {
-                final Method method = methodNameMap.get(varName);
-
-                // TODO if it has the @MustacheParallel annotation, set up a Future for it
-
-                fragmentList.add(new MethodReturnRenderer(method));
-                return;
-            }
-
-            throw new MustacheParserException(locator,
-                    "no MustacheValue named '" + varName + "' in object");
+            final ValueSource valueSource = valueNameMap.get(varName);
+            final VariableRenderer variableRenderer = valueSource.createVariableRenderer();
+            fragmentList.add(variableRenderer);
         }
 
         @Override

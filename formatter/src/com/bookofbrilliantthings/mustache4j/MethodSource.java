@@ -20,6 +20,12 @@ public class MethodSource
     }
 
     @Override
+    public VariableRenderer createVariableRenderer()
+    {
+        return new MethodReturnRenderer(method);
+    }
+
+    @Override
     public RendererFactory createConditionalRendererFactory(
             LinkedList<FragmentRenderer> fragmentList, boolean inverted)
     {
