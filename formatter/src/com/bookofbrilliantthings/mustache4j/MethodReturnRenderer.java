@@ -27,6 +27,5 @@ public class MethodReturnRenderer
 
         // TODO if this isn't a primitive type, it might be a nested object
         writer.write(resultObject.toString());
-
     }
 }
