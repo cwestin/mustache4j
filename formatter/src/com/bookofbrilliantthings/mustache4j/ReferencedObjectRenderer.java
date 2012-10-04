@@ -4,13 +4,13 @@ import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class ChildObjectRenderer
+public class ReferencedObjectRenderer
     implements FragmentRenderer
 {
     private final ObjectRenderer objectRenderer;
     private final Field field;
 
-    public ChildObjectRenderer(final List<FragmentRenderer> fragmentList, final Field field)
+    public ReferencedObjectRenderer(final List<FragmentRenderer> fragmentList, final Field field)
     {
         objectRenderer = new ObjectRenderer(fragmentList, field.getType());
         this.field = field;
@@ -42,7 +42,7 @@ public class ChildObjectRenderer
         @Override
         public FragmentRenderer createRenderer()
         {
-            return new ChildObjectRenderer(fragmentList, field);
+            return new ReferencedObjectRenderer(fragmentList, field);
         }
     }
 

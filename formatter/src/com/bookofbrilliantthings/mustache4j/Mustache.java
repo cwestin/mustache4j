@@ -172,7 +172,7 @@ public class Mustache
                     final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
                     final ObjectHandler objectHandler =
                             new ObjectHandler(fragmentList, forClass,
-                                    ConditionalRenderer.createFactory(fragmentList, inverted, field),
+                                    ConditionalFieldRenderer.createFactory(fragmentList, inverted, field),
                                     stackingParserHandler);
 
                     stackingParserHandler.push(objectHandler);
@@ -218,7 +218,7 @@ public class Mustache
                     final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
                     final ObjectHandler objectHandler =
                             new ObjectHandler(fragmentList, fieldType,
-                                    ChildObjectRenderer.createFactory(fragmentList, field),
+                                    ReferencedObjectRenderer.createFactory(fragmentList, field),
                                     stackingParserHandler);
                     stackingParserHandler.push(objectHandler);
                     return;
@@ -232,6 +232,8 @@ public class Mustache
             // check for methods this section name might refer to
             if (methodNameMap.containsKey(secName))
             {
+                final Method method = methodNameMap.get(secName);
+
                 // TODO
                 throw new RuntimeException("{{# for functions unimplemented");
             }

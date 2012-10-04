@@ -4,14 +4,14 @@ import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class ConditionalRenderer
+public class ConditionalFieldRenderer
     implements FragmentRenderer
 {
     private final ObjectRenderer objectRenderer;
     private final boolean inverted;
     private final Field field;
 
-    public ConditionalRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
+    public ConditionalFieldRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
             final Field booleanField)
     {
         assert booleanField.getType() == boolean.class;
@@ -48,7 +48,7 @@ public class ConditionalRenderer
         @Override
         public FragmentRenderer createRenderer()
         {
-            return new ConditionalRenderer(fragmentList, inverted, field);
+            return new ConditionalFieldRenderer(fragmentList, inverted, field);
         }
     }
 
