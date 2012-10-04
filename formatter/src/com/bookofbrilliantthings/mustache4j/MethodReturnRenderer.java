@@ -29,5 +29,4 @@ public class MethodReturnRenderer
         writer.write(resultObject.toString());
 
     }
-
 }
