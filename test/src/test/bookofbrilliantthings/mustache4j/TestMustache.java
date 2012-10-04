@@ -66,7 +66,7 @@ public class TestMustache
 */
 
     private static void testObject(final MustacheRenderer mustacheRenderer,
-            final Object o, final String template, final String expected)
+            final Object o, final String expected)
         throws Exception
     {
         final StringWriter stringWriter = new StringWriter();
@@ -96,7 +96,7 @@ public class TestMustache
             m1.bar = 3;
 
             final MustacheRenderer mustacheRendererM1 = Mustache.compile(new StringReader(template1), M1.class);
-            testObject(mustacheRendererM1, m1, template1, "    a     3  ");
+            testObject(mustacheRendererM1, m1, "    a     3  ");
         }
         catch(Exception e)
         {
@@ -144,15 +144,15 @@ public class TestMustache
             m2.hasPiB = Boolean.FALSE;
             m2.pi = 0;
 
-            testObject(mustacheRendererM2, m2, template1, "");
-            testObject(mustacheRendererM2a, m2, template2, "");
+            testObject(mustacheRendererM2, m2, "");
+            testObject(mustacheRendererM2a, m2, "");
 
             m2.hasPi = true;
             m2.hasPiB = Boolean.TRUE;
             m2.pi = Math.PI;
 
-            testObject(mustacheRendererM2, m2, template1, Double.toString(Math.PI));
-            testObject(mustacheRendererM2a, m2, template2, Double.toString(Math.PI));
+            testObject(mustacheRendererM2, m2, Double.toString(Math.PI));
+            testObject(mustacheRendererM2a, m2, Double.toString(Math.PI));
         }
         catch(Exception e)
         {
@@ -200,14 +200,14 @@ public class TestMustache
             m3.sonOfFlubber = '\'';
             m3.m2 = null;
 
-            testObject(mustacheRendererM3, m3, template1, "''");
-            testObject(mustacheRendererM3a, m3, template2, "'no m2!'");
+            testObject(mustacheRendererM3, m3, "''");
+            testObject(mustacheRendererM3a, m3, "'no m2!'");
 
             final M2 m2 = new M2();
             m2.hasPi = true;
             m2.pi = Math.PI;
             m3.m2 = m2;
-            testObject(mustacheRendererM3, m3, template1, "'" + Double.toString(Math.PI) + "'");
+            testObject(mustacheRendererM3, m3, "'" + Double.toString(Math.PI) + "'");
         }
         catch(Exception e)
         {
@@ -237,15 +237,15 @@ public class TestMustache
             final M4 m4 = new M4();
 
             // start out without even showing the list
-            testObject(mustacheRenderer, m4, template1, "");
+            testObject(mustacheRenderer, m4, "");
 
             // now try showing the list, but the list doesn't exist, so we still should see nothing
             m4.showList = true;
-            testObject(mustacheRenderer, m4, template1, "");
+            testObject(mustacheRenderer, m4, "");
 
             // add a list, but leave it empty
             m4.listM2 = new LinkedList<M2>();
-            testObject(mustacheRenderer, m4, template1, "");
+            testObject(mustacheRenderer, m4, "");
 
             // now put things on the list
             M2 m2 = new M2();
@@ -254,7 +254,7 @@ public class TestMustache
             m2 = new M2();
             m2.pi = Math.E;
             m4.listM2.add(m2);
-            testObject(mustacheRenderer, m4, template1,
+            testObject(mustacheRenderer, m4,
                     Double.toString(Math.PI) + "\n" + Double.toString(Math.E) + "\n");
         }
         catch(Exception e)
@@ -286,7 +286,7 @@ public class TestMustache
             final String template1 = "{{baz}} {{foo}}";
             final MustacheRenderer mustacheRenderer = Mustache.compile(new StringReader(template1), M5.class);
             final M5 m5 = new M5();
-            testObject(mustacheRenderer, m5, template1, "bar 42");
+            testObject(mustacheRenderer, m5, "bar 42");
         }
         catch(Exception e)
         {
@@ -318,6 +318,12 @@ public class TestMustache
         }
 
         @MustacheValue
+        public Boolean getDontShowEB()
+        {
+            return getDontShowE() ? Boolean.TRUE : Boolean.FALSE;
+        }
+
+        @MustacheValue
         public double getE()
         {
             return Math.E;
@@ -327,19 +333,25 @@ public class TestMustache
     @Test
     public void testConditionalMethods()
     {
+        final String template1 = "{{#showPi}}{{pi}}{{/showPi}}{{^dontShowE}}{{e}}{{/dontShowE}}";
+        final String template2 = "{{#showPi}}{{pi}}{{/showPi}}{{^dontShowEB}}{{e}}{{/dontShowEB}}";
+
         try
         {
-            final String template1 = "{{#showPi}}{{pi}}{{/showPi}}{{^dontShowE}}{{e}}{{/dontShowE}}";
-            final MustacheRenderer mustacheRenderer = Mustache.compile(new StringReader(template1), M6.class);
+            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M6.class);
+            final MustacheRenderer mustacheRenderer2 = Mustache.compile(new StringReader(template2), M6.class);
+
             final M6 m6 = new M6();
 
             m6.showPi = true;
             m6.showE = false;
-            testObject(mustacheRenderer, m6, template1, Double.toString(Math.PI));
+            testObject(mustacheRenderer1, m6, Double.toString(Math.PI));
+            testObject(mustacheRenderer2, m6, Double.toString(Math.PI));
 
             m6.showPi = false;
             m6.showE = true;
-            testObject(mustacheRenderer, m6, template1, Double.toString(Math.E));
+            testObject(mustacheRenderer1, m6, Double.toString(Math.E));
+            testObject(mustacheRenderer2, m6, Double.toString(Math.E));
         }
         catch(Exception e)
         {

@@ -1,48 +1,36 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.List;
 
 public class ConditionalMethodRenderer
-    implements FragmentRenderer
+    extends ConditionalSectionRenderer
 {
-    private final ObjectRenderer objectRenderer;
-    private final boolean inverted;
     private final Method method;
 
     public ConditionalMethodRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
             final Method booleanMethod)
     {
-        assert booleanMethod.getReturnType() == boolean.class;
-        objectRenderer = new ObjectRenderer(fragmentList, booleanMethod.getDeclaringClass());
-        this.inverted = inverted;
+        super(fragmentList, inverted, booleanMethod.getReturnType(), booleanMethod.getDeclaringClass());
         this.method = booleanMethod;
     }
 
     @Override
-    public void render(final Writer writer, final Object o)
+    public boolean getCondition(final Object o)
         throws Exception
     {
-        final Boolean b0 = (Boolean)method.invoke(o, (Object [])null);
-        final boolean b = b0.booleanValue() ^ inverted;
-        if (!b)
-            return;
-
-        objectRenderer.render(writer, o);
+        final Boolean b = (Boolean)method.invoke(o, (Object [])null);
+        return b.booleanValue();
     }
 
     private static class MyFactory
-        implements RendererFactory
+        extends Factory
     {
-        private final List<FragmentRenderer> fragmentList;
-        private final boolean inverted;
         private final Method method;
 
         MyFactory(final List<FragmentRenderer> fragmentList, final boolean inverted, final Method method)
         {
-            this.fragmentList = fragmentList;
-            this.inverted = inverted;
+            super(fragmentList, inverted);
             this.method = method;
         }
 
