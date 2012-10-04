@@ -49,7 +49,7 @@ public class Mustache
         public void literal(String literal)
             throws MustacheParserException
         {
-            fragmentList.add(new StringRenderer(literal));
+            fragmentList.add(new LiteralRenderer(literal));
         }
     }
 

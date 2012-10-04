@@ -2,12 +2,12 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.io.Writer;
 
-public class StringRenderer
+public class LiteralRenderer
     implements FragmentRenderer
 {
     private final String string;
 
-    public StringRenderer(final String string)
+    public LiteralRenderer(final String string)
     {
         this.string = string;
     }
