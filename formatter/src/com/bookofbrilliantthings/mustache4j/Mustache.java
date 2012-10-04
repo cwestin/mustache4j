@@ -250,7 +250,7 @@ public class Mustache
 
         Template.parse(stackingParserHandler, templateReader);
 
-        return new TopLevelRenderer(fragmentList, forClass);
+        return new MustacheRenderer(fragmentList, forClass);
     }
 
 /* DISABLED

@@ -1,4 +1,4 @@
-package com.bookofbrilliantthings.mustache4j.util;
+package com.bookofbrilliantthings.mustache4j;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -15,6 +15,11 @@ public class HtmlEscapeWriter
     {
         this.writer = writer;
         isClosed = false;
+    }
+
+    public Writer getUnescapedWriter()
+    {
+        return writer;
     }
 
     @Override

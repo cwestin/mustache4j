@@ -1,10 +1,10 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.Writer;
 import java.util.List;
 
+
 public class ObjectRenderer
-    extends MustacheRenderer
+    extends BasicRenderer
 {
     private final Class<?> forClass;
 
@@ -16,7 +16,7 @@ public class ObjectRenderer
     }
 
     @Override
-    public void render(Writer writer, Object o)
+    public void render(HtmlEscapeWriter writer, Object o)
         throws Exception
     {
         // check the class argument once at the beginning

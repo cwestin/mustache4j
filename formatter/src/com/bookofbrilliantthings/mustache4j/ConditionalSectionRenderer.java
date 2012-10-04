@@ -1,7 +1,7 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.Writer;
 import java.util.List;
+
 
 public abstract class ConditionalSectionRenderer
     implements FragmentRenderer
@@ -23,7 +23,7 @@ public abstract class ConditionalSectionRenderer
         throws Exception;
 
     @Override
-    public void render(final Writer writer, final Object o)
+    public void render(final HtmlEscapeWriter writer, final Object o)
         throws Exception
     {
         if (getCondition(o) ^ inverted)

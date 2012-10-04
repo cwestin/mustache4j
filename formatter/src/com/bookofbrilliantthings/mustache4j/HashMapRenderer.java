@@ -1,11 +1,11 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class HashMapRenderer
-    extends MustacheRenderer
+    extends BasicRenderer
 {
     public HashMapRenderer(List<FragmentRenderer> fragmentList)
     {
@@ -13,7 +13,7 @@ public class HashMapRenderer
     }
 
     @Override
-    public void render(Writer writer, Object o)
+    public void render(HtmlEscapeWriter writer, Object o)
         throws Exception
     {
         // check the class argument once at the beginning

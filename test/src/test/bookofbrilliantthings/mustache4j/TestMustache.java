@@ -12,11 +12,11 @@ import java.util.regex.Pattern;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.bookofbrilliantthings.mustache4j.HtmlEscapeWriter;
 import com.bookofbrilliantthings.mustache4j.Mustache;
 import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
 import com.bookofbrilliantthings.mustache4j.Template;
-import com.bookofbrilliantthings.mustache4j.util.HtmlEscapeWriter;
 import com.bookofbrilliantthings.mustache4j.util.StringWriter;
 
 public class TestMustache
@@ -93,6 +93,32 @@ public class TestMustache
             {
                 // nothing
             }
+        }
+    }
+
+    public static class M0
+    {
+        @MustacheValue
+        public String x;
+    }
+
+    @Test
+    public void testHtml()
+    {
+        final String template1 = "<html><head><title>{{x}}</title></head><body>foo</body></html>";
+        final String e1 = "<html><head><title>Fear &amp; Loathing</title></head><body>foo</body></html>";
+
+        try
+        {
+            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M0.class);
+            final M0 m0 = new M0();
+            m0.x = "Fear & Loathing";
+
+            testObject(mustacheRenderer1, m0, e1);
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
         }
     }
 

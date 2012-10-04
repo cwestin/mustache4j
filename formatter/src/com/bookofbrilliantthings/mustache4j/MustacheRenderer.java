@@ -1,26 +1,21 @@
 package com.bookofbrilliantthings.mustache4j;
 
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MustacheRenderer
-    implements FragmentRenderer
 {
-    private final List<FragmentRenderer> fragmentList;
+    private final ObjectRenderer objectRenderer;
 
-    public MustacheRenderer(List<FragmentRenderer> fragmentList)
+    public MustacheRenderer(List<FragmentRenderer> fragmentList, Class<?> forClass)
     {
-        this.fragmentList = new ArrayList<FragmentRenderer>(fragmentList); // clone into an array
+        objectRenderer = new ObjectRenderer(fragmentList, forClass);
     }
 
-    @Override
     public void render(Writer writer, Object o)
         throws Exception
     {
-        for(FragmentRenderer renderer : fragmentList)
-        {
-            renderer.render(writer, o);
-        }
+        HtmlEscapeWriter htmlEscapeWriter = new HtmlEscapeWriter(writer);
+        objectRenderer.render(htmlEscapeWriter, o);
     }
 }

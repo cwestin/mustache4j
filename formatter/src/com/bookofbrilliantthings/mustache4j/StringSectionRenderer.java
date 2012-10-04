@@ -1,7 +1,7 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.Writer;
 import java.util.List;
+
 
 public abstract class StringSectionRenderer
     implements FragmentRenderer
@@ -20,7 +20,7 @@ public abstract class StringSectionRenderer
         throws Exception;
 
     @Override
-    public void render(final Writer writer, final Object o)
+    public void render(final HtmlEscapeWriter writer, final Object o)
         throws Exception
     {
         final String s = getString(o);

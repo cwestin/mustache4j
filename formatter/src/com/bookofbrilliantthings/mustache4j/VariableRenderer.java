@@ -1,6 +1,5 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.Writer;
 
 public abstract class VariableRenderer
     implements FragmentRenderer
@@ -18,7 +17,7 @@ public abstract class VariableRenderer
         throws Exception;
 
     @Override
-    public void render(final Writer writer, final Object o)
+    public void render(final HtmlEscapeWriter writer, final Object o)
         throws Exception
     {
         final Object value = getValue(o);
