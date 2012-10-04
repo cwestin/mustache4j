@@ -8,11 +8,15 @@ public class ReferencedObjectRenderer
     implements FragmentRenderer
 {
     private final ObjectRenderer objectRenderer;
+    private final boolean inverted;
     private final Field field;
 
-    public ReferencedObjectRenderer(final List<FragmentRenderer> fragmentList, final Field field)
+    public ReferencedObjectRenderer(final List<FragmentRenderer> fragmentList,
+            final boolean inverted, final Field field)
     {
-        objectRenderer = new ObjectRenderer(fragmentList, field.getType());
+        objectRenderer = new ObjectRenderer(fragmentList,
+                (inverted ? field.getDeclaringClass() : field.getType()));
+        this.inverted = inverted;
         this.field = field;
     }
 
@@ -21,33 +25,45 @@ public class ReferencedObjectRenderer
         throws Exception
     {
         final Object childObject = field.get(o);
-        if (childObject == null)
-            return;
 
-        objectRenderer.render(writer, childObject);
+        if (!inverted)
+        {
+            if (childObject == null)
+                return;
+
+            objectRenderer.render(writer, childObject);
+        }
+        else
+        {
+            if (childObject == null)
+                objectRenderer.render(writer, o);
+        }
     }
 
     private static class MyRendererFactory
         implements RendererFactory
     {
         private final List<FragmentRenderer> fragmentList;
+        private final boolean inverted;
         private final Field field;
 
-        MyRendererFactory(List<FragmentRenderer> fragmentList, Field field)
+        MyRendererFactory(List<FragmentRenderer> fragmentList, boolean inverted, Field field)
         {
             this.fragmentList = fragmentList;
+            this.inverted = inverted;
             this.field = field;
         }
 
         @Override
         public FragmentRenderer createRenderer()
         {
-            return new ReferencedObjectRenderer(fragmentList, field);
+            return new ReferencedObjectRenderer(fragmentList, inverted, field);
         }
     }
 
-    public static RendererFactory createFactory(final List<FragmentRenderer> fragmentList, final Field field)
+    public static RendererFactory createFactory(final List<FragmentRenderer> fragmentList,
+            final boolean inverted, final Field field)
     {
-        return new MyRendererFactory(fragmentList, field);
+        return new MyRendererFactory(fragmentList, inverted, field);
     }
 }

@@ -181,10 +181,6 @@ public class Mustache
 
                 if (pt == PrimitiveType.OBJECT)
                 {
-                    if (inverted)
-                        throw new MustacheParserException(locator,
-                            "can't create an inverted section for an Object, List<>, or Iterable<>");
-
                     // check for List<T> (follow up with getGenericType())
                     if (List.class.isAssignableFrom(fieldType))
                     {
@@ -196,14 +192,14 @@ public class Mustache
                         stackingParserHandler.push(objectHandler);
                         return;
  */
-                        throw new RuntimeException("List<T> unimplemented");
+                        throw new RuntimeException("List<T> field unimplemented");
                     }
 
                     // check for Iterable<T>
                     if (Iterable.class.isAssignableFrom(fieldType))
                     {
                         // TODO
-                        throw new RuntimeException("Iterable<T> unimplemented");
+                        throw new RuntimeException("Iterable<T> field unimplemented");
                     }
 
                     // check for HashMap<String, T>
@@ -217,8 +213,8 @@ public class Mustache
 
                     final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
                     final ObjectHandler objectHandler =
-                            new ObjectHandler(fragmentList, fieldType,
-                                    ReferencedObjectRenderer.createFactory(fragmentList, field),
+                            new ObjectHandler(fragmentList, (inverted ? forClass : fieldType),
+                                    ReferencedObjectRenderer.createFactory(fragmentList, inverted, field),
                                     stackingParserHandler);
                     stackingParserHandler.push(objectHandler);
                     return;

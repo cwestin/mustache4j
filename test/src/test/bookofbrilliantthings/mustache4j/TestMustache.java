@@ -168,6 +168,7 @@ public class TestMustache
     public void testNestedSections()
     {
         final String template1 = "{{flubber}}{{#m2}}{{#hazPi}}{{pi}}{{/hazPi}}{{/m2}}{{sonOfFlubber}}";
+        final String template2 = "{{^m2}}{{flubber}}no m2!{{sonOfFlubber}}{{/m2}}";
 
         try
         {
@@ -184,6 +185,7 @@ public class TestMustache
 */
 
             final MustacheRenderer mustacheRendererM3 = Mustache.compile(new StringReader(template1), M3.class);
+            final MustacheRenderer mustacheRendererM3a = Mustache.compile(new StringReader(template2), M3.class);
 
             final M3 m3 = new M3();
             m3.flubber = '\'';
@@ -191,6 +193,7 @@ public class TestMustache
             m3.m2 = null;
 
             testObject(mustacheRendererM3, m3, template1, "''");
+            testObject(mustacheRendererM3a, m3, template2, "'no m2!'");
 
             final M2 m2 = new M2();
             m2.hasPi = true;
