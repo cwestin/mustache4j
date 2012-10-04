@@ -21,26 +21,44 @@ enum PrimitiveType
             if (theClass.equals(String.class))
                 return STRING;
 
+            // since we use wrapped types in evaluation, check for those, and treat as primitive
+            if (theClass.equals(Boolean.class))
+                return BOOLEAN;
+            if (theClass.equals(Byte.class))
+                return BYTE;
+            if (theClass.equals(Character.class))
+                return CHAR;
+            if (theClass.equals(Short.class))
+                return SHORT;
+            if (theClass.equals(Integer.class))
+                return INT;
+            if (theClass.equals(Long.class))
+                return LONG;
+            if (theClass.equals(Float.class))
+                return FLOAT;
+            if (theClass.equals(Double.class))
+                return DOUBLE;
+
             return OBJECT;
         }
 
-        if (theClass == void.class)
+        if (theClass.equals(void.class))
             return VOID;
-        if (theClass == boolean.class)
+        if (theClass.equals(boolean.class))
             return BOOLEAN;
-        if (theClass == byte.class)
+        if (theClass.equals(byte.class))
             return BYTE;
-        if (theClass == char.class)
+        if (theClass.equals(char.class))
             return CHAR;
-        if (theClass == short.class)
+        if (theClass.equals(short.class))
             return SHORT;
-        if (theClass == int.class)
+        if (theClass.equals(int.class))
             return INT;
-        if (theClass == long.class)
+        if (theClass.equals(long.class))
             return LONG;
-        if (theClass == float.class)
+        if (theClass.equals(float.class))
             return FLOAT;
-        if (theClass == double.class)
+        if (theClass.equals(double.class))
             return DOUBLE;
 
         throw new IllegalArgumentException("class is not a primitive or an object");

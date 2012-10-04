@@ -1,47 +1,35 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.List;
 
 public class ConditionalFieldRenderer
-    implements FragmentRenderer
+    extends ConditionalSectionRenderer
 {
-    private final ObjectRenderer objectRenderer;
-    private final boolean inverted;
     private final Field field;
 
     public ConditionalFieldRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
             final Field booleanField)
     {
-        assert booleanField.getType() == boolean.class;
-        objectRenderer = new ObjectRenderer(fragmentList, booleanField.getDeclaringClass());
-        this.inverted = inverted;
+        super(fragmentList, inverted, booleanField.getType(), booleanField.getDeclaringClass());
         this.field = booleanField;
     }
 
     @Override
-    public void render(final Writer writer, final Object o)
+    public boolean getCondition(final Object o)
         throws Exception
     {
-        final boolean b = field.getBoolean(o) ^ inverted;
-        if (!b)
-            return;
-
-        objectRenderer.render(writer, o);
+        return ((Boolean)field.get(o)).booleanValue();
     }
 
     private static class MyFactory
-        implements RendererFactory
+        extends Factory
     {
-        private final List<FragmentRenderer> fragmentList;
-        private final boolean inverted;
         private final Field field;
 
         MyFactory(final List<FragmentRenderer> fragmentList, final boolean inverted, final Field field)
         {
-            this.fragmentList = fragmentList;
-            this.inverted = inverted;
+            super(fragmentList, inverted);
             this.field = field;
         }
 

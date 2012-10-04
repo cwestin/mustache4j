@@ -110,6 +110,9 @@ public class TestMustache
         public boolean hasPi;
 
         @MustacheValue
+        public Boolean hasPiB;
+
+        @MustacheValue
         public double pi;
     }
 
@@ -117,6 +120,7 @@ public class TestMustache
     public void testConditionalSections()
     {
         final String template1 = "{{#hazPi}}{{pi}}{{/hazPi}}";
+        final String template2 = "{{#hasPiB}}{{pi}}{{/hasPiB}}";
 
         try
         {
@@ -134,17 +138,21 @@ public class TestMustache
 
             final M2 m2 = new M2();
             final MustacheRenderer mustacheRendererM2 = Mustache.compile(new StringReader(template1), M2.class);
+            final MustacheRenderer mustacheRendererM2a = Mustache.compile(new StringReader(template2), M2.class);
 
             m2.hasPi = false;
+            m2.hasPiB = Boolean.FALSE;
             m2.pi = 0;
 
             testObject(mustacheRendererM2, m2, template1, "");
+            testObject(mustacheRendererM2a, m2, template2, "");
 
             m2.hasPi = true;
+            m2.hasPiB = Boolean.TRUE;
             m2.pi = Math.PI;
 
             testObject(mustacheRendererM2, m2, template1, Double.toString(Math.PI));
-
+            testObject(mustacheRendererM2a, m2, template2, Double.toString(Math.PI));
         }
         catch(Exception e)
         {
