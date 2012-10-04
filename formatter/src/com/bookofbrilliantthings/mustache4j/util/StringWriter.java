@@ -44,7 +44,7 @@ public class StringWriter
         }
     }
 
-    private final static String ALREADY_CLOSED = "stream is already closed";
+    private final static String ALREADY_CLOSED = "Writer is already closed";
 
     @Override
     public void flush()
@@ -71,7 +71,8 @@ public class StringWriter
         if (isClosed)
             throw new IOException(ALREADY_CLOSED);
 
-        stringBuilder.append(buf, offset, length);
+        if (length > 0)
+            stringBuilder.append(buf, offset, length);
     }
 
     @Override
@@ -101,6 +102,9 @@ public class StringWriter
         if (isClosed)
             throw new IOException(ALREADY_CLOSED);
 
-        stringBuilder.append(s, offset, length);
+        assert offset > 0;
+        assert length >= 0;
+        if (length > 0)
+            stringBuilder.append(s, offset, offset + length);
     }
 }

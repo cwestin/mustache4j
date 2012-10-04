@@ -2,9 +2,12 @@ package test.bookofbrilliantthings.mustache4j;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -13,10 +16,85 @@ import com.bookofbrilliantthings.mustache4j.Mustache;
 import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
 import com.bookofbrilliantthings.mustache4j.Template;
+import com.bookofbrilliantthings.mustache4j.util.HtmlEscapeWriter;
 import com.bookofbrilliantthings.mustache4j.util.StringWriter;
 
 public class TestMustache
 {
+
+    private final static Pattern ampPattern = Pattern.compile("&");
+    private final static Pattern ltPattern = Pattern.compile("<");
+    private final static Pattern gtPattern = Pattern.compile(">");
+    private final static Pattern quotPattern = Pattern.compile("\"");
+
+    private static String globalReplace(String s, Pattern pattern, String rep)
+    {
+        final Matcher matcher = pattern.matcher(s);
+        return matcher.replaceAll(rep);
+    }
+
+    private static String escapeHtml(String s)
+    {
+        s = globalReplace(s, ampPattern, "&amp;");
+        s = globalReplace(s, ltPattern, "&lt;");
+        s = globalReplace(s, gtPattern, "&gt;");
+        s = globalReplace(s, quotPattern, "&quot;");
+        return s;
+    }
+
+    @Test
+    public void testEscapeWriter()
+    {
+        HtmlEscapeWriter escapeWriter = null;
+
+        try
+        {
+            final String s1 = "<b>Github & beers</b>";
+            final char c1[] = s1.toCharArray();
+            final String e1 = escapeHtml(s1);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            StringWriter stringWriter = new StringWriter(stringBuilder);
+            escapeWriter = new HtmlEscapeWriter(stringWriter);
+
+            stringBuilder.setLength(0);
+            escapeWriter.write(s1);
+            assertEquals(e1, stringBuilder.toString());
+
+            stringBuilder.setLength(0);
+            escapeWriter.write(c1);
+            assertEquals(e1, stringBuilder.toString());
+
+            // test the writers with offsets
+            final String s2 = "abc 123 " + s1;
+            final char c2[] = s2.toCharArray();
+
+            stringBuilder.setLength(0);
+            escapeWriter.write(s2, 8, s1.length());
+            assertEquals(e1, stringBuilder.toString());
+
+            stringBuilder.setLength(0);
+            escapeWriter.write(c2, 8, s1.length());
+            assertEquals(e1, stringBuilder.toString());
+
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+        finally
+        {
+            try
+            {
+                if (escapeWriter != null)
+                    escapeWriter.close();
+            }
+            catch(IOException ioe)
+            {
+                // nothing
+            }
+        }
+    }
 
     public static class M1
     {
