@@ -101,7 +101,7 @@ public class Mustache
                         field.getName() : mustacheValue.tagname();
 
                 fieldNameMap.put(tagname, field);
-                valueNameMap.put(tagname, new FieldSource(field));
+                valueNameMap.put(tagname, new FieldSource(tagname, field));
             }
 
             // index the methods
@@ -131,7 +131,7 @@ public class Mustache
                         getBeanName(methodName, forClass) : mustacheValue.tagname();
 
                 methodNameMap.put(tagname, method);
-                valueNameMap.put(tagname,  new MethodSource(method));
+                valueNameMap.put(tagname,  new MethodSource(tagname, method));
             }
         }
 
@@ -152,30 +152,31 @@ public class Mustache
         public void sectionBegin(String secName, boolean inverted)
             throws MustacheParserException
         {
-            // check for fields that this section name might refer to
-            if (fieldNameMap.containsKey(secName))
+            if (!valueNameMap.containsKey(secName))
+                throw new MustacheParserException(locator,
+                        "no MustacheValue named '" + secName + "' in object");
+
+            final ValueSource valueSource = valueNameMap.get(secName);
+            final Class<?> valueType = valueSource.getType();
+            final PrimitiveType pt = PrimitiveType.getSwitchType(valueType);
+
+            if (pt == PrimitiveType.BOOLEAN)
             {
-                final Field field = fieldNameMap.get(secName);
-                final Class<?> fieldType = field.getType();
-                final PrimitiveType pt = PrimitiveType.getSwitchType(fieldType);
+                final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+                final ObjectHandler objectHandler =
+                        new ObjectHandler(fragmentList, forClass,
+                                valueSource.createConditionalRendererFactory(fragmentList, inverted),
+                                stackingParserHandler);
 
-                if (pt == PrimitiveType.BOOLEAN)
+                stackingParserHandler.push(objectHandler);
+                return;
+            }
+
+            if (pt == PrimitiveType.OBJECT)
+            {
+                // check for List<T> (follow up with getGenericType())
+                if (List.class.isAssignableFrom(valueType))
                 {
-                    final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
-                    final ObjectHandler objectHandler =
-                            new ObjectHandler(fragmentList, forClass,
-                                    ConditionalFieldRenderer.createFactory(fragmentList, inverted, field),
-                                    stackingParserHandler);
-
-                    stackingParserHandler.push(objectHandler);
-                    return;
-                }
-
-                if (pt == PrimitiveType.OBJECT)
-                {
-                    // check for List<T> (follow up with getGenericType())
-                    if (List.class.isAssignableFrom(fieldType))
-                    {
 /* TODO
                         final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
                         final ObjectHandler objectHandler = new ObjectHandler(fragmentList, x,
@@ -184,65 +185,37 @@ public class Mustache
                         stackingParserHandler.push(objectHandler);
                         return;
  */
-                        throw new RuntimeException("List<T> field unimplemented");
-                    }
-
-                    // check for Iterable<T>
-                    if (Iterable.class.isAssignableFrom(fieldType))
-                    {
-                        // TODO
-                        throw new RuntimeException("Iterable<T> field unimplemented");
-                    }
-
-                    // check for HashMap<String, T>
-                    // TODO
-
-                    // check for arrays
-                    // TODO
-
-                    // reject other generics for the time being
-                    // TODO detect these
-
-                    final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
-                    final ObjectHandler objectHandler =
-                            new ObjectHandler(fragmentList, (inverted ? forClass : fieldType),
-                                    ReferencedObjectRenderer.createFactory(fragmentList, inverted, field),
-                                    stackingParserHandler);
-                    stackingParserHandler.push(objectHandler);
-                    return;
+                    throw new RuntimeException("List<T> field unimplemented");
                 }
 
-                throw new MustacheParserException(locator, "section '" + secName +
-                        "': don't know what to do with field '" + field.getName() +
-                        "' of type '" + fieldType.getName() + "'");
-            }
-
-            // check for methods this section name might refer to
-            if (methodNameMap.containsKey(secName))
-            {
-                final Method method = methodNameMap.get(secName);
-                final Class<?> returnType = method.getReturnType();
-                final PrimitiveType pt = PrimitiveType.getSwitchType(returnType);
-
-                if (pt == PrimitiveType.BOOLEAN)
+                // check for Iterable<T>
+                if (Iterable.class.isAssignableFrom(valueType))
                 {
-                    final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
-                    final ObjectHandler objectHandler =
-                            new ObjectHandler(fragmentList, forClass,
-                                    ConditionalMethodRenderer.createFactory(fragmentList, inverted, method),
-                                    stackingParserHandler);
-
-                    stackingParserHandler.push(objectHandler);
-                    return;
+                    // TODO
+                    throw new RuntimeException("Iterable<T> field unimplemented");
                 }
 
+                // check for HashMap<String, T>
                 // TODO
-                throw new RuntimeException("{{#/{{^ for non-boolean functions unimplemented");
+
+                // check for arrays
+                // TODO
+
+                // reject other generics for the time being
+                // TODO detect these
+
+                final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+                final ObjectHandler objectHandler =
+                        new ObjectHandler(fragmentList, (inverted ? forClass : valueType),
+                                valueSource.createObjectRendererFactory(fragmentList, inverted),
+                                stackingParserHandler);
+                stackingParserHandler.push(objectHandler);
+                return;
             }
 
-            throw new MustacheParserException(locator,
-                    "there is no member or method matching section name \"" +
-                    secName + "\"");
+            throw new MustacheParserException(locator, "section '" + secName +
+                    "': don't know what to do with MustacheValue '" + valueSource.getName() +
+                    "' of type '" + valueType.getName() + "'");
         }
 
         @Override

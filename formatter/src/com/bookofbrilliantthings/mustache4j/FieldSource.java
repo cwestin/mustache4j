@@ -4,12 +4,13 @@ import java.lang.reflect.Field;
 import java.util.LinkedList;
 
 public class FieldSource
-    implements ValueSource
+    extends ValueSource
 {
     private final Field field;
 
-    public FieldSource(Field field)
+    public FieldSource(String name, Field field)
     {
+        super(name);
         this.field = field;
     }
 
@@ -30,5 +31,12 @@ public class FieldSource
             LinkedList<FragmentRenderer> fragmentList, boolean inverted)
     {
         return ConditionalFieldRenderer.createFactory(fragmentList, inverted, field);
+    }
+
+    @Override
+    public RendererFactory createObjectRendererFactory(
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
+    {
+        return ReferencedObjectRenderer.createFactory(fragmentList, inverted, field);
     }
 }

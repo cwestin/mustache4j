@@ -4,12 +4,13 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 
 public class MethodSource
-    implements ValueSource
+    extends ValueSource
 {
     private final Method method;
 
-    public MethodSource(Method method)
+    public MethodSource(String name, Method method)
     {
+        super(name);
         this.method = method;
     }
 
@@ -30,5 +31,12 @@ public class MethodSource
             LinkedList<FragmentRenderer> fragmentList, boolean inverted)
     {
         return ConditionalMethodRenderer.createFactory(fragmentList, inverted, method);
+    }
+
+    @Override
+    public RendererFactory createObjectRendererFactory(
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
+    {
+        return ReturnedObjectRenderer.createFactory(fragmentList, inverted, method);
     }
 }

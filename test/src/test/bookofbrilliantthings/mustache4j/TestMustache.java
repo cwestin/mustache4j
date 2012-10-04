@@ -170,6 +170,12 @@ public class TestMustache
 
         @MustacheValue
         public char sonOfFlubber;
+
+        @MustacheValue
+        public M2 getF2()
+        {
+            return m2;
+        }
     }
 
     @Test
@@ -177,6 +183,9 @@ public class TestMustache
     {
         final String template1 = "{{flubber}}{{#m2}}{{#hazPi}}{{pi}}{{/hazPi}}{{/m2}}{{sonOfFlubber}}";
         final String template2 = "{{^m2}}{{flubber}}no m2!{{sonOfFlubber}}{{/m2}}";
+
+        final String template3 = "{{flubber}}{{#f2}}{{#hazPi}}{{pi}}{{/hazPi}}{{/f2}}{{sonOfFlubber}}";
+        final String template4 = "{{^f2}}{{flubber}}no m2!{{sonOfFlubber}}{{/f2}}";
 
         try
         {
@@ -192,22 +201,27 @@ public class TestMustache
             testHashMap(mustacheRendererH1, hashMap1, template1, Double.toString(Math.PI));
 */
 
-            final MustacheRenderer mustacheRendererM3 = Mustache.compile(new StringReader(template1), M3.class);
-            final MustacheRenderer mustacheRendererM3a = Mustache.compile(new StringReader(template2), M3.class);
+            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M3.class);
+            final MustacheRenderer mustacheRenderer2 = Mustache.compile(new StringReader(template2), M3.class);
+            final MustacheRenderer mustacheRenderer3 = Mustache.compile(new StringReader(template3), M3.class);
+            final MustacheRenderer mustacheRenderer4 = Mustache.compile(new StringReader(template4), M3.class);
 
             final M3 m3 = new M3();
             m3.flubber = '\'';
             m3.sonOfFlubber = '\'';
             m3.m2 = null;
 
-            testObject(mustacheRendererM3, m3, "''");
-            testObject(mustacheRendererM3a, m3, "'no m2!'");
+            testObject(mustacheRenderer1, m3, "''");
+            testObject(mustacheRenderer2, m3, "'no m2!'");
+            testObject(mustacheRenderer3, m3, "''");
+            testObject(mustacheRenderer4, m3, "'no m2!'");
 
             final M2 m2 = new M2();
             m2.hasPi = true;
             m2.pi = Math.PI;
             m3.m2 = m2;
-            testObject(mustacheRendererM3, m3, "'" + Double.toString(Math.PI) + "'");
+            testObject(mustacheRenderer1, m3, "'" + Double.toString(Math.PI) + "'");
+            testObject(mustacheRenderer3, m3, "'" + Double.toString(Math.PI) + "'");
         }
         catch(Exception e)
         {
