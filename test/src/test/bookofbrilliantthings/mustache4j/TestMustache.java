@@ -314,7 +314,7 @@ public class TestMustache
     }
 
     @Test
-    public void testConditionalFunctions()
+    public void testConditionalMethods()
     {
         try
         {
