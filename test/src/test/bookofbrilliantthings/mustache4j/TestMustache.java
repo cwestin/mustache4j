@@ -170,11 +170,11 @@ public class TestMustache
 */
 
             final M1 m1 = new M1();
-            m1.xfoo = "a";
+            m1.xfoo = "&";
             m1.bar = 3;
 
             final MustacheRenderer mustacheRendererM1 = Mustache.compile(new StringReader(template1), M1.class);
-            testObject(mustacheRendererM1, m1, "    a     3  ");
+            testObject(mustacheRendererM1, m1, "    &amp;     3  ");
         }
         catch(Exception e)
         {

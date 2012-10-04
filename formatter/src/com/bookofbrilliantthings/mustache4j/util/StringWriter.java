@@ -68,6 +68,9 @@ public class StringWriter
     public void write(char buf[], int offset, int length)
         throws IOException
     {
+        assert offset >= 0;
+        assert length >= 0;
+
         if (isClosed)
             throw new IOException(ALREADY_CLOSED);
 
@@ -99,11 +102,12 @@ public class StringWriter
     public void write(String s, int offset, int length)
         throws IOException
     {
+        assert offset >= 0;
+        assert length >= 0;
+
         if (isClosed)
             throw new IOException(ALREADY_CLOSED);
 
-        assert offset > 0;
-        assert length >= 0;
         if (length > 0)
             stringBuilder.append(s, offset, offset + length);
     }

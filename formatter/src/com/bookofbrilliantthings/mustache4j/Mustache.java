@@ -237,7 +237,7 @@ public class Mustache
 
         Template.parse(stackingParserHandler, templateReader);
 
-        return new ObjectRenderer(fragmentList, forClass);
+        return new TopLevelRenderer(fragmentList, forClass);
     }
 
 /* DISABLED
