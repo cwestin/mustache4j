@@ -39,4 +39,11 @@ public class MethodSource
     {
         return ReturnedObjectRenderer.createFactory(fragmentList, inverted, method);
     }
+
+    @Override
+    public RendererFactory createStringSectionRendererFactory(
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
+    {
+        return StringMethodSectionRenderer.createFactory(fragmentList, inverted, method);
+    }
 }

@@ -39,4 +39,11 @@ public class FieldSource
     {
         return ReferencedObjectRenderer.createFactory(fragmentList, inverted, field);
     }
+
+    @Override
+    public RendererFactory createStringSectionRendererFactory(
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
+    {
+        return StringFieldSectionRenderer.createFactory(fragmentList, inverted, field);
+    }
 }

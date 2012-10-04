@@ -24,4 +24,6 @@ public abstract class ValueSource
             LinkedList<FragmentRenderer> fragmentList, boolean inverted);
     public abstract RendererFactory createObjectRendererFactory(
             LinkedList<FragmentRenderer> fragmentList, boolean inverted);
+    public abstract RendererFactory createStringSectionRendererFactory(
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
 }

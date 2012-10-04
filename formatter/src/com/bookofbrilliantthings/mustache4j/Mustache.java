@@ -156,17 +156,31 @@ public class Mustache
                 throw new MustacheParserException(locator,
                         "no MustacheValue named '" + secName + "' in object");
 
+            // gather information we need to decide what to instantiate
             final ValueSource valueSource = valueNameMap.get(secName);
             final Class<?> valueType = valueSource.getType();
             final PrimitiveType pt = PrimitiveType.getSwitchType(valueType);
 
+            // begin constructing what we need for the section
+            final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+
             if (pt == PrimitiveType.BOOLEAN)
             {
-                final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+                final RendererFactory rendererFactory =
+                        valueSource.createConditionalRendererFactory(fragmentList, inverted);
                 final ObjectHandler objectHandler =
-                        new ObjectHandler(fragmentList, forClass,
-                                valueSource.createConditionalRendererFactory(fragmentList, inverted),
-                                stackingParserHandler);
+                        new ObjectHandler(fragmentList, forClass, rendererFactory, stackingParserHandler);
+
+                stackingParserHandler.push(objectHandler);
+                return;
+            }
+
+            if (pt == PrimitiveType.STRING)
+            {
+                final RendererFactory rendererFactory =
+                        valueSource.createStringSectionRendererFactory(fragmentList, inverted);
+                final ObjectHandler objectHandler =
+                        new ObjectHandler(fragmentList, forClass, rendererFactory, stackingParserHandler);
 
                 stackingParserHandler.push(objectHandler);
                 return;
@@ -178,7 +192,6 @@ public class Mustache
                 if (List.class.isAssignableFrom(valueType))
                 {
 /* TODO
-                        final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
                         final ObjectHandler objectHandler = new ObjectHandler(fragmentList, x,
                                 ListRenderer.createFactory(fragmentList, field), stackingParserHandler);
 
@@ -204,11 +217,11 @@ public class Mustache
                 // reject other generics for the time being
                 // TODO detect these
 
-                final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
+                final RendererFactory rendererFactory =
+                        valueSource.createObjectRendererFactory(fragmentList, inverted);
                 final ObjectHandler objectHandler =
                         new ObjectHandler(fragmentList, (inverted ? forClass : valueType),
-                                valueSource.createObjectRendererFactory(fragmentList, inverted),
-                                stackingParserHandler);
+                                rendererFactory, stackingParserHandler);
                 stackingParserHandler.push(objectHandler);
                 return;
             }

@@ -450,4 +450,60 @@ public class TestMustache
             fail(e.toString());
         }
     }
+
+    public static class M7
+    {
+        @MustacheValue
+        public String myString;
+
+        @MustacheValue
+        public String yourString;
+
+        public String theirString;
+
+        @MustacheValue
+        public String getTheirString()
+        {
+            return theirString;
+        }
+    }
+
+    @Test
+    public void testStringSections()
+    {
+        final String template1 = "{{#myString}}{{myString}}{{yourString}}{{/myString}}";
+        final String template2 = "{{^myString}}{{yourString}}{{/myString}}";
+        final String template3 = "{{#theirString}}{{myString}}{{/theirString}}";
+        final String template4 = "{{^theirString}}{{yourString}}{{/theirString}}";
+
+        try
+        {
+            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M7.class);
+            final MustacheRenderer mustacheRenderer2 = Mustache.compile(new StringReader(template2), M7.class);
+            final MustacheRenderer mustacheRenderer3 = Mustache.compile(new StringReader(template3), M7.class);
+            final MustacheRenderer mustacheRenderer4 = Mustache.compile(new StringReader(template4), M7.class);
+
+            final M7 m7 = new M7();
+
+            m7.myString = "foo";
+            m7.yourString = "bar";
+            testObject(mustacheRenderer1, m7, "foobar");
+            testObject(mustacheRenderer2, m7, "");
+
+            m7.myString = null;
+            testObject(mustacheRenderer2, m7, "bar");
+
+            testObject(mustacheRenderer3, m7, "");
+            testObject(mustacheRenderer4, m7, "bar");
+
+            m7.myString = "foo";
+            m7.theirString = "baz";
+            testObject(mustacheRenderer3, m7, "foo");
+            testObject(mustacheRenderer4, m7, "");
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+    }
 }
