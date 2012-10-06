@@ -28,48 +28,6 @@ public class FieldSource
     }
 
     @Override
-    public RendererFactory createConditionalRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return ConditionalFieldRenderer.createFactory(fragmentList, inverted, field);
-    }
-
-    @Override
-    public RendererFactory createObjectRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return ReferencedObjectRenderer.createFactory(fragmentList, inverted, field);
-    }
-
-    @Override
-    public RendererFactory createStringSectionRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return StringFieldSectionRenderer.createFactory(fragmentList, inverted, field);
-    }
-
-    @Override
-    public FragmentRenderer createObjectRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return new ReferencedObjectRenderer(fragmentList, inverted, field);
-    }
-
-    @Override
-    public FragmentRenderer createConditionalRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return new ConditionalFieldRenderer(fragmentList, inverted, field);
-    }
-
-    @Override
-    public FragmentRenderer createStringSectionRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return new StringFieldSectionRenderer(fragmentList, inverted, field);
-    }
-
-    @Override
     public Class<? extends FragmentRenderer> getObjectRendererClass()
     {
         return ReferencedObjectRenderer.class;

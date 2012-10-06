@@ -27,18 +27,4 @@ public abstract class ValueSource
     public abstract <T extends FragmentRenderer> T createRenderer(Class<T> rendererClass,
             LinkedList<FragmentRenderer> fragmentList, boolean inverted)
         throws MustacheParserException;
-
-    public abstract FragmentRenderer createObjectRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
-    public abstract FragmentRenderer createConditionalRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
-    public abstract FragmentRenderer createStringSectionRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
-
-    public abstract RendererFactory createConditionalRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
-    public abstract RendererFactory createObjectRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
-    public abstract RendererFactory createStringSectionRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
 }

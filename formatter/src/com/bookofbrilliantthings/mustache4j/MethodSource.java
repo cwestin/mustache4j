@@ -28,48 +28,6 @@ public class MethodSource
     }
 
     @Override
-    public RendererFactory createConditionalRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return ConditionalMethodRenderer.createFactory(fragmentList, inverted, method);
-    }
-
-    @Override
-    public RendererFactory createObjectRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return ReturnedObjectRenderer.createFactory(fragmentList, inverted, method);
-    }
-
-    @Override
-    public RendererFactory createStringSectionRendererFactory(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return StringMethodSectionRenderer.createFactory(fragmentList, inverted, method);
-    }
-
-    @Override
-    public FragmentRenderer createObjectRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return new ReturnedObjectRenderer(fragmentList, inverted, method);
-    }
-
-    @Override
-    public FragmentRenderer createConditionalRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return new ConditionalMethodRenderer(fragmentList, inverted, method);
-    }
-
-    @Override
-    public FragmentRenderer createStringSectionRenderer(
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-    {
-        return new StringMethodSectionRenderer(fragmentList, inverted, method);
-    }
-
-    @Override
     public Class<? extends FragmentRenderer> getObjectRendererClass()
     {
         return ReturnedObjectRenderer.class;
