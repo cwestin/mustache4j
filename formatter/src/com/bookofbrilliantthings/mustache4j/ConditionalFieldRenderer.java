@@ -21,28 +21,4 @@ public class ConditionalFieldRenderer
     {
         return ((Boolean)field.get(o)).booleanValue();
     }
-
-    private static class MyFactory
-        extends Factory
-    {
-        private final Field field;
-
-        MyFactory(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted, final Field field)
-        {
-            super(fragmentList, inverted);
-            this.field = field;
-        }
-
-        @Override
-        public FragmentRenderer createRenderer()
-        {
-            return new ConditionalFieldRenderer(fragmentList, inverted, field);
-        }
-    }
-
-    public static RendererFactory createFactory(final LinkedList<FragmentRenderer> fragmentList,
-            final boolean inverted, final Field booleanField)
-    {
-        return new MyFactory(fragmentList, inverted, booleanField);
-    }
 }

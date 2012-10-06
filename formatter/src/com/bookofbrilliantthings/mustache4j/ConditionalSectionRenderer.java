@@ -28,20 +28,4 @@ public abstract class ConditionalSectionRenderer
         if (getCondition(o) ^ inverted)
             objectRenderer.render(writer, o);
     }
-
-    protected static abstract class Factory
-        implements RendererFactory
-    {
-        protected final LinkedList<FragmentRenderer> fragmentList;
-        protected final boolean inverted;
-
-        Factory(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted)
-        {
-            this.fragmentList = fragmentList;
-            this.inverted = inverted;
-        }
-
-        @Override
-        public abstract FragmentRenderer createRenderer();
-    }
 }
