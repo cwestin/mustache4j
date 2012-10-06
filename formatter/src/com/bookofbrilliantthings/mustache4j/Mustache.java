@@ -144,8 +144,7 @@ public class Mustache
                         "no MustacheValue named '" + varName + "' in object");
 
             final ValueSource valueSource = valueNameMap.get(varName);
-            final VariableRenderer variableRenderer = valueSource.createVariableRenderer();
-            fragmentList.add(variableRenderer);
+            fragmentList.add(valueSource.createVariableRenderer());
         }
 
         @Override

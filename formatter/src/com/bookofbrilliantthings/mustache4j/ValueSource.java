@@ -18,7 +18,7 @@ public abstract class ValueSource
 
     public abstract Class<?> getType();
 
-    public abstract VariableRenderer createVariableRenderer();
+    public abstract FragmentRenderer createVariableRenderer();
 
     public abstract RendererFactory createConditionalRendererFactory(
             LinkedList<FragmentRenderer> fragmentList, boolean inverted);
