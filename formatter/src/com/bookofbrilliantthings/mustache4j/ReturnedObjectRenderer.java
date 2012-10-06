@@ -1,14 +1,14 @@
 package com.bookofbrilliantthings.mustache4j;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.LinkedList;
 
 public class ReturnedObjectRenderer
     extends ObjectSectionRenderer
 {
     private final Method method;
 
-    public ReturnedObjectRenderer(final List<FragmentRenderer> fragmentList,
+    public ReturnedObjectRenderer(final LinkedList<FragmentRenderer> fragmentList,
             final boolean inverted, final Method method)
     {
         super(fragmentList, inverted, method.getReturnType(), method.getDeclaringClass());
@@ -27,7 +27,7 @@ public class ReturnedObjectRenderer
     {
         private final Method method;
 
-        MyFactory(List<FragmentRenderer> fragmentList, boolean inverted, Method method)
+        MyFactory(LinkedList<FragmentRenderer> fragmentList, boolean inverted, Method method)
         {
             super(fragmentList, inverted);
             this.method = method;
@@ -40,7 +40,7 @@ public class ReturnedObjectRenderer
         }
     }
 
-    public static RendererFactory createFactory(final List<FragmentRenderer> fragmentList,
+    public static RendererFactory createFactory(final LinkedList<FragmentRenderer> fragmentList,
             final boolean inverted, final Method method)
     {
         return new MyFactory(fragmentList, inverted, method);

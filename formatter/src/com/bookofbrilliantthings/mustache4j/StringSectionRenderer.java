@@ -1,7 +1,6 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.util.List;
-
+import java.util.LinkedList;
 
 public abstract class StringSectionRenderer
     implements FragmentRenderer
@@ -9,7 +8,7 @@ public abstract class StringSectionRenderer
     private final ObjectRenderer objectRenderer;
     private final boolean inverted;
 
-    protected StringSectionRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
+    protected StringSectionRenderer(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted,
             Class<?> forClass)
     {
         objectRenderer = new ObjectRenderer(fragmentList, forClass);
@@ -32,10 +31,10 @@ public abstract class StringSectionRenderer
     protected static abstract class Factory
         implements RendererFactory
     {
-        protected final List<FragmentRenderer> fragmentList;
+        protected final LinkedList<FragmentRenderer> fragmentList;
         protected final boolean inverted;
 
-        Factory(final List<FragmentRenderer> fragmentList, final boolean inverted)
+        Factory(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted)
         {
             this.fragmentList = fragmentList;
             this.inverted = inverted;

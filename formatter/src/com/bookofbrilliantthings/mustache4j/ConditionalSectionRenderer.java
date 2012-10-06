@@ -1,7 +1,6 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.util.List;
-
+import java.util.LinkedList;
 
 public abstract class ConditionalSectionRenderer
     implements FragmentRenderer
@@ -9,8 +8,8 @@ public abstract class ConditionalSectionRenderer
     private final ObjectRenderer objectRenderer;
     private final boolean inverted;
 
-    protected ConditionalSectionRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
-            Class<?> conditionClass, Class<?> forClass)
+    protected ConditionalSectionRenderer(final LinkedList<FragmentRenderer> fragmentList,
+            final boolean inverted, Class<?> conditionClass, Class<?> forClass)
     {
         if (!conditionClass.equals(boolean.class) && !conditionClass.equals(Boolean.class))
             throw new IllegalArgumentException("conditional section can only operate on boolean or Boolean");
@@ -33,10 +32,10 @@ public abstract class ConditionalSectionRenderer
     protected static abstract class Factory
         implements RendererFactory
     {
-        protected final List<FragmentRenderer> fragmentList;
+        protected final LinkedList<FragmentRenderer> fragmentList;
         protected final boolean inverted;
 
-        Factory(final List<FragmentRenderer> fragmentList, final boolean inverted)
+        Factory(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted)
         {
             this.fragmentList = fragmentList;
             this.inverted = inverted;

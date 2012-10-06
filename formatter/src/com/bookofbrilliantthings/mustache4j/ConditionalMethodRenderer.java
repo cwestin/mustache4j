@@ -1,14 +1,14 @@
 package com.bookofbrilliantthings.mustache4j;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.LinkedList;
 
 public class ConditionalMethodRenderer
     extends ConditionalSectionRenderer
 {
     private final Method method;
 
-    public ConditionalMethodRenderer(final List<FragmentRenderer> fragmentList, final boolean inverted,
+    public ConditionalMethodRenderer(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted,
             final Method booleanMethod)
     {
         super(fragmentList, inverted, booleanMethod.getReturnType(), booleanMethod.getDeclaringClass());
@@ -28,7 +28,7 @@ public class ConditionalMethodRenderer
     {
         private final Method method;
 
-        MyFactory(final List<FragmentRenderer> fragmentList, final boolean inverted, final Method method)
+        MyFactory(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted, final Method method)
         {
             super(fragmentList, inverted);
             this.method = method;
@@ -41,7 +41,7 @@ public class ConditionalMethodRenderer
         }
     }
 
-    public static RendererFactory createFactory(final List<FragmentRenderer> fragmentList,
+    public static RendererFactory createFactory(final LinkedList<FragmentRenderer> fragmentList,
             final boolean inverted, final Method booleanMethod)
     {
         return new MyFactory(fragmentList, inverted, booleanMethod);

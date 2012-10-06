@@ -1,14 +1,14 @@
 package com.bookofbrilliantthings.mustache4j;
 
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.LinkedList;
 
 public class ReferencedObjectRenderer
     extends ObjectSectionRenderer
 {
     private final Field field;
 
-    public ReferencedObjectRenderer(final List<FragmentRenderer> fragmentList,
+    public ReferencedObjectRenderer(final LinkedList<FragmentRenderer> fragmentList,
             final boolean inverted, final Field field)
     {
         super(fragmentList, inverted, field.getType(), field.getDeclaringClass());
@@ -27,7 +27,7 @@ public class ReferencedObjectRenderer
     {
         private final Field field;
 
-        MyFactory(List<FragmentRenderer> fragmentList, boolean inverted, Field field)
+        MyFactory(LinkedList<FragmentRenderer> fragmentList, boolean inverted, Field field)
         {
             super(fragmentList, inverted);
             this.field = field;
@@ -40,7 +40,7 @@ public class ReferencedObjectRenderer
         }
     }
 
-    public static RendererFactory createFactory(final List<FragmentRenderer> fragmentList,
+    public static RendererFactory createFactory(final LinkedList<FragmentRenderer> fragmentList,
             final boolean inverted, final Field field)
     {
         return new MyFactory(fragmentList, inverted, field);

@@ -20,6 +20,21 @@ public abstract class ValueSource
 
     public abstract FragmentRenderer createVariableRenderer();
 
+    public abstract Class<? extends FragmentRenderer> getObjectRendererClass();
+    public abstract Class<? extends FragmentRenderer> getConditionalRendererClass();
+    public abstract Class<? extends FragmentRenderer> getStringSectionRendererClass();
+
+    public abstract <T extends FragmentRenderer> T createRenderer(Class<T> rendererClass,
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
+        throws MustacheParserException;
+
+    public abstract FragmentRenderer createObjectRenderer(
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
+    public abstract FragmentRenderer createConditionalRenderer(
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
+    public abstract FragmentRenderer createStringSectionRenderer(
+            LinkedList<FragmentRenderer> fragmentList, boolean inverted);
+
     public abstract RendererFactory createConditionalRendererFactory(
             LinkedList<FragmentRenderer> fragmentList, boolean inverted);
     public abstract RendererFactory createObjectRendererFactory(

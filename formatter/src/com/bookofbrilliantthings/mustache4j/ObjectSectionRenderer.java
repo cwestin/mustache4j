@@ -1,7 +1,6 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.util.List;
-
+import java.util.LinkedList;
 
 public abstract class ObjectSectionRenderer
     implements FragmentRenderer
@@ -9,7 +8,7 @@ public abstract class ObjectSectionRenderer
     private final ObjectRenderer objectRenderer;
     private final boolean inverted;
 
-    public ObjectSectionRenderer(final List<FragmentRenderer> fragmentList,
+    public ObjectSectionRenderer(final LinkedList<FragmentRenderer> fragmentList,
             final boolean inverted, final Class<?> valueClass, final Class<?> containerClass)
     {
         final PrimitiveType primitiveType = PrimitiveType.getSwitchType(valueClass);
@@ -46,10 +45,10 @@ public abstract class ObjectSectionRenderer
     protected static abstract class Factory
         implements RendererFactory
     {
-        protected final List<FragmentRenderer> fragmentList;
+        protected final LinkedList<FragmentRenderer> fragmentList;
         protected final boolean inverted;
 
-        Factory(List<FragmentRenderer> fragmentList, boolean inverted)
+        Factory(LinkedList<FragmentRenderer> fragmentList, boolean inverted)
         {
             this.fragmentList = fragmentList;
             this.inverted = inverted;
