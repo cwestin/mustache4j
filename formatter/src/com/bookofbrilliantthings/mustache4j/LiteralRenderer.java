@@ -21,5 +21,4 @@ public class LiteralRenderer
         final Writer unescapedWriter = writer.getUnescapedWriter();
         unescapedWriter.write(string);
     }
-
 }

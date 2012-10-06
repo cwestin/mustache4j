@@ -76,29 +76,4 @@ public class ListRenderer
             objectRenderer.render(writer, iterator.next());
         }
     }
-
-    private static class MyFactory
-        implements RendererFactory
-    {
-        private final List<FragmentRenderer> fragmentList;
-        private final Field field;
-
-        MyFactory(List<FragmentRenderer> fragmentList, Field field)
-        {
-            this.fragmentList = fragmentList;
-            this.field = field;
-        }
-
-        @Override
-        public FragmentRenderer createRenderer()
-        {
-            throw new RuntimeException("unimplemented");
-            //return new ListRenderer(fragmentList, field);
-        }
-    }
-
-    public static RendererFactory createFactory(List<FragmentRenderer> fragmentList, Field field)
-    {
-        return new MyFactory(fragmentList, field);
-    }
 }

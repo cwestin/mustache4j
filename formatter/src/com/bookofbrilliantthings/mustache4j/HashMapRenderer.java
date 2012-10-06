@@ -3,7 +3,6 @@ package com.bookofbrilliantthings.mustache4j;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class HashMapRenderer
     extends BasicRenderer
 {
@@ -22,27 +21,5 @@ public class HashMapRenderer
             throw new IllegalArgumentException("object is not a HashMap<String, ?>");
 
         super.render(writer, o);
-    }
-
-    private static class MyFactory
-        implements RendererFactory
-    {
-        private final List<FragmentRenderer> fragmentList;
-
-        MyFactory(List<FragmentRenderer> fragmentList, Class<?> forClass)
-        {
-            this.fragmentList = fragmentList;
-        }
-
-        @Override
-        public FragmentRenderer createRenderer()
-        {
-            return new HashMapRenderer(fragmentList);
-        }
-    }
-
-    public static RendererFactory createFactory(List<FragmentRenderer> fragmentList, Class<?> forClass)
-    {
-        return new MyFactory(fragmentList, forClass);
     }
 }
