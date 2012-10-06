@@ -24,28 +24,4 @@ public class StringMethodSectionRenderer
 
         return null;
     }
-
-    private static class MyFactory
-        extends Factory
-    {
-        private final Method method;
-
-        MyFactory(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted, final Method method)
-        {
-            super(fragmentList, inverted);
-            this.method = method;
-        }
-
-        @Override
-        public FragmentRenderer createRenderer()
-        {
-            return new StringMethodSectionRenderer(fragmentList, inverted, method);
-        }
-    }
-
-    public static RendererFactory createFactory(final LinkedList<FragmentRenderer> fragmentList,
-            final boolean inverted, final Method method)
-    {
-        return new MyFactory(fragmentList, inverted, method);
-    }
 }

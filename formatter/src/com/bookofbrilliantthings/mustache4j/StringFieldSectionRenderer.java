@@ -24,28 +24,4 @@ public class StringFieldSectionRenderer
 
         return null;
     }
-
-    private static class MyFactory
-        extends Factory
-    {
-        private final Field field;
-
-        MyFactory(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted, final Field field)
-        {
-            super(fragmentList, inverted);
-            this.field = field;
-        }
-
-        @Override
-        public FragmentRenderer createRenderer()
-        {
-            return new StringFieldSectionRenderer(fragmentList, inverted, field);
-        }
-    }
-
-    public static RendererFactory createFactory(final LinkedList<FragmentRenderer> fragmentList,
-            final boolean inverted, final Field field)
-    {
-        return new MyFactory(fragmentList, inverted, field);
-    }
 }
