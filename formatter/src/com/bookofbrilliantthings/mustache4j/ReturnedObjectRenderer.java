@@ -21,28 +21,4 @@ public class ReturnedObjectRenderer
     {
         return method.invoke(o, (Object [])null);
     }
-
-    private static class MyFactory
-        extends Factory
-    {
-        private final Method method;
-
-        MyFactory(LinkedList<FragmentRenderer> fragmentList, boolean inverted, Method method)
-        {
-            super(fragmentList, inverted);
-            this.method = method;
-        }
-
-        @Override
-        public FragmentRenderer createRenderer()
-        {
-            return new ReturnedObjectRenderer(fragmentList, inverted, method);
-        }
-    }
-
-    public static RendererFactory createFactory(final LinkedList<FragmentRenderer> fragmentList,
-            final boolean inverted, final Method method)
-    {
-        return new MyFactory(fragmentList, inverted, method);
-    }
 }

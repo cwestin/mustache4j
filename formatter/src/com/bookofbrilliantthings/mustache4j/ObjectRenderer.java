@@ -26,28 +26,4 @@ public class ObjectRenderer
 
         super.render(writer, o);
     }
-
-    private static class MyFactory
-        implements RendererFactory
-    {
-        private final List<FragmentRenderer> fragmentList;
-        private final Class<?> forClass;
-
-        MyFactory(List<FragmentRenderer> fragmentList, Class<?> forClass)
-        {
-            this.fragmentList = fragmentList;
-            this.forClass = forClass;
-        }
-
-        @Override
-        public FragmentRenderer createRenderer()
-        {
-            return new ObjectRenderer(fragmentList, forClass);
-        }
-    }
-
-    public static RendererFactory createFactory(List<FragmentRenderer> fragmentList, Class<?> forClass)
-    {
-        return new MyFactory(fragmentList, forClass);
-    }
 }

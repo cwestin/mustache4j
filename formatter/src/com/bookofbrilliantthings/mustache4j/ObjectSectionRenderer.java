@@ -41,19 +41,4 @@ public abstract class ObjectSectionRenderer
                 objectRenderer.render(writer, o);
         }
     }
-
-    protected static abstract class Factory
-        implements RendererFactory
-    {
-        protected final LinkedList<FragmentRenderer> fragmentList;
-        protected final boolean inverted;
-
-        Factory(LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-        {
-            this.fragmentList = fragmentList;
-            this.inverted = inverted;
-        }
-
-        public abstract FragmentRenderer createRenderer();
-    }
 }
