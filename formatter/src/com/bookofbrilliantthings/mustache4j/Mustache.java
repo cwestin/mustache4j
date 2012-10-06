@@ -183,13 +183,7 @@ public class Mustache
                 // check for List<T> (follow up with getGenericType())
                 if (List.class.isAssignableFrom(valueType))
                 {
-/* TODO
-                        final ObjectHandler objectHandler = new ObjectHandler(fragmentList, x,
-                                ListRenderer.createFactory(fragmentList, field), stackingParserHandler);
-
-                        stackingParserHandler.push(objectHandler);
-                        return;
- */
+                    // TODO
                     throw new RuntimeException("List<T> field unimplemented");
                 }
 
