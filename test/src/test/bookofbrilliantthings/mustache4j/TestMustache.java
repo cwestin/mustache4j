@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -12,11 +13,11 @@ import java.util.regex.Pattern;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.bookofbrilliantthings.mustache4j.HtmlEscapeWriter;
 import com.bookofbrilliantthings.mustache4j.Mustache;
 import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
 import com.bookofbrilliantthings.mustache4j.Template;
+import com.bookofbrilliantthings.mustache4j.util.CorrectEscapeWriter;
 import com.bookofbrilliantthings.mustache4j.util.StringWriter;
 
 public class TestMustache
@@ -45,7 +46,7 @@ public class TestMustache
     @Test
     public void testEscapeWriter()
     {
-        HtmlEscapeWriter escapeWriter = null;
+        Writer escapeWriter = null;
 
         try
         {
@@ -55,14 +56,16 @@ public class TestMustache
 
             StringBuilder stringBuilder = new StringBuilder();
             StringWriter stringWriter = new StringWriter(stringBuilder);
-            escapeWriter = new HtmlEscapeWriter(stringWriter);
+            escapeWriter = new CorrectEscapeWriter(stringWriter);
 
             stringBuilder.setLength(0);
             escapeWriter.write(s1);
+            escapeWriter.flush();
             assertEquals(e1, stringBuilder.toString());
 
             stringBuilder.setLength(0);
             escapeWriter.write(c1);
+            escapeWriter.flush();
             assertEquals(e1, stringBuilder.toString());
 
             // test the writers with offsets
@@ -71,12 +74,13 @@ public class TestMustache
 
             stringBuilder.setLength(0);
             escapeWriter.write(s2, 8, s1.length());
+            escapeWriter.flush();
             assertEquals(e1, stringBuilder.toString());
 
             stringBuilder.setLength(0);
             escapeWriter.write(c2, 8, s1.length());
+            escapeWriter.flush();
             assertEquals(e1, stringBuilder.toString());
-
         }
         catch(Exception e)
         {

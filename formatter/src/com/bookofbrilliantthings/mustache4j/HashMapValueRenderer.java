@@ -2,6 +2,8 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.util.HashMap;
 
+import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
+
 
 /**
  * Note: requires looking up the key twice; once via containsKey(), and another via get().
@@ -20,7 +22,7 @@ public class HashMapValueRenderer
     }
 
     @Override
-    public void render(HtmlEscapeWriter writer, Object hm)
+    public void render(SwitchableWriter writer, Object hm)
         throws Exception
     {
         // TODO find a way not to do dynamic casts on this for every element

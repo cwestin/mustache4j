@@ -2,6 +2,8 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.util.List;
 
+import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
+
 
 public class ObjectRenderer
     extends BasicRenderer
@@ -16,7 +18,7 @@ public class ObjectRenderer
     }
 
     @Override
-    public void render(HtmlEscapeWriter writer, Object o)
+    public void render(SwitchableWriter writer, Object o)
         throws Exception
     {
         // check the class argument once at the beginning

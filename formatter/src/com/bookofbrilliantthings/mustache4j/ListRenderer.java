@@ -9,6 +9,8 @@ import java.lang.reflect.WildcardType;
 import java.util.Iterator;
 import java.util.List;
 
+import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
+
 
 public class ListRenderer
     implements FragmentRenderer
@@ -63,7 +65,7 @@ public class ListRenderer
     }
 
     @Override
-    public void render(final HtmlEscapeWriter writer, final Object o)
+    public void render(final SwitchableWriter writer, final Object o)
         throws Exception
     {
         final List<?> list = (List<?>)field.get(o);

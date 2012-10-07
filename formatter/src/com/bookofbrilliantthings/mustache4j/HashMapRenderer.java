@@ -3,6 +3,8 @@ package com.bookofbrilliantthings.mustache4j;
 import java.util.HashMap;
 import java.util.List;
 
+import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
+
 public class HashMapRenderer
     extends BasicRenderer
 {
@@ -12,7 +14,7 @@ public class HashMapRenderer
     }
 
     @Override
-    public void render(HtmlEscapeWriter writer, Object o)
+    public void render(SwitchableWriter writer, Object o)
         throws Exception
     {
         // check the class argument once at the beginning

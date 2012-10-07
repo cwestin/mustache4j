@@ -2,6 +2,8 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.util.LinkedList;
 
+import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
+
 public abstract class ObjectSectionRenderer
     implements FragmentRenderer
 {
@@ -23,7 +25,7 @@ public abstract class ObjectSectionRenderer
         throws Exception;
 
     @Override
-    public void render(final HtmlEscapeWriter writer, final Object o)
+    public void render(final SwitchableWriter writer, final Object o)
         throws Exception
     {
         final Object value = getValue(o);

@@ -1,7 +1,6 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.Writer;
-
+import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 public class LiteralRenderer
     implements FragmentRenderer
@@ -14,11 +13,12 @@ public class LiteralRenderer
     }
 
     @Override
-    public void render(final HtmlEscapeWriter writer, final Object o)
+    public void render(final SwitchableWriter writer, final Object o)
         throws Exception
     {
         // in order to write this without escaping, use the original writer
-        final Writer unescapedWriter = writer.getUnescapedWriter();
-        unescapedWriter.write(string);
+        final boolean on = writer.setFiltered(false);
+        writer.write(string);
+        writer.setFiltered(on);
     }
 }
