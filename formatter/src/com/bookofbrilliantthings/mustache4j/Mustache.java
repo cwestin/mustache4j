@@ -1,6 +1,5 @@
 package com.bookofbrilliantthings.mustache4j;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -8,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
-
 
 public class Mustache
 {
