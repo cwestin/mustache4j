@@ -10,18 +10,18 @@ import java.io.Writer;
  * @author cwestin
  *
  */
-public class StringWriter
+public class StringBuilderWriter
     extends Writer
 {
     private final StringBuilder stringBuilder;
     private boolean isClosed;
 
-    public StringWriter()
+    public StringBuilderWriter()
     {
         stringBuilder = new StringBuilder();
     }
 
-    public StringWriter(final StringBuilder stringBuilder)
+    public StringBuilderWriter(final StringBuilder stringBuilder)
     {
         this.stringBuilder = stringBuilder;
         isClosed = false;

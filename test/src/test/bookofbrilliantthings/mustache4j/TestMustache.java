@@ -18,7 +18,7 @@ import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
 import com.bookofbrilliantthings.mustache4j.Template;
 import com.bookofbrilliantthings.mustache4j.util.HtmlEscapeWriter;
-import com.bookofbrilliantthings.mustache4j.util.StringWriter;
+import com.bookofbrilliantthings.mustache4j.util.StringBuilderWriter;
 
 public class TestMustache
 {
@@ -55,7 +55,7 @@ public class TestMustache
             final String e1 = escapeHtml(s1);
 
             StringBuilder stringBuilder = new StringBuilder();
-            StringWriter stringWriter = new StringWriter(stringBuilder);
+            StringBuilderWriter stringWriter = new StringBuilderWriter(stringBuilder);
             escapeWriter = new HtmlEscapeWriter(stringWriter);
 
             stringBuilder.setLength(0);
@@ -177,7 +177,7 @@ public class TestMustache
             final Object o, final String expected)
         throws Exception
     {
-        final StringWriter stringWriter = new StringWriter();
+        final StringBuilderWriter stringWriter = new StringBuilderWriter();
         mustacheRenderer.render(stringWriter, o);
         final String result = stringWriter.toString();
         assertEquals(expected, result);
