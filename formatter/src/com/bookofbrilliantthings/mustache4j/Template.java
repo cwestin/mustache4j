@@ -44,6 +44,9 @@ public class Template
         PARTIAL,
         PARTIAL_CLOSE,
 
+        UNESCAPE,
+        UNESCAPE_CLOSE,
+
         DELIMITER_ASSIGNMENT,
 
         UNEXPECTED_CHAR,
@@ -156,6 +159,12 @@ public class Template
                 if (c == '>')
                 {
                     state = State.PARTIAL;
+                    break;
+                }
+
+                if (c == '&')
+                {
+                    state = State.UNESCAPE;
                     break;
                 }
 
@@ -347,8 +356,10 @@ public class Template
 
             case PARTIAL:
             case PARTIAL_CLOSE:
+            case UNESCAPE:
+            case UNESCAPE_CLOSE:
             case DELIMITER_ASSIGNMENT:
-                throw new MustacheParserException(reader, "unimplemented feature");
+                throw new MustacheParserException(reader, "unimplemented feature " + state);
 
             case UNEXPECTED_CHAR:
                 if (c == -1)
