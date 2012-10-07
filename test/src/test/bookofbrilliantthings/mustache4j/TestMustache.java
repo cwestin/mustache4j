@@ -17,7 +17,7 @@ import com.bookofbrilliantthings.mustache4j.Mustache;
 import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
 import com.bookofbrilliantthings.mustache4j.Template;
-import com.bookofbrilliantthings.mustache4j.util.CorrectEscapeWriter;
+import com.bookofbrilliantthings.mustache4j.util.HtmlEscapeWriter;
 import com.bookofbrilliantthings.mustache4j.util.StringWriter;
 
 public class TestMustache
@@ -56,7 +56,7 @@ public class TestMustache
 
             StringBuilder stringBuilder = new StringBuilder();
             StringWriter stringWriter = new StringWriter(stringBuilder);
-            escapeWriter = new CorrectEscapeWriter(stringWriter);
+            escapeWriter = new HtmlEscapeWriter(stringWriter);
 
             stringBuilder.setLength(0);
             escapeWriter.write(s1);

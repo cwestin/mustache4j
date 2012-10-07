@@ -3,7 +3,7 @@ package com.bookofbrilliantthings.mustache4j;
 import java.io.Writer;
 import java.util.List;
 
-import com.bookofbrilliantthings.mustache4j.util.CorrectEscapeWriter;
+import com.bookofbrilliantthings.mustache4j.util.HtmlEscapeWriter;
 import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 public class MustacheRenderer
@@ -18,7 +18,7 @@ public class MustacheRenderer
     public void render(Writer writer, Object o)
         throws Exception
     {
-        final CorrectEscapeWriter htmlEscapeWriter = new CorrectEscapeWriter(writer);
+        final HtmlEscapeWriter htmlEscapeWriter = new HtmlEscapeWriter(writer);
         final SwitchableWriter switchableWriter = new SwitchableWriter(writer, htmlEscapeWriter);
         objectRenderer.render(switchableWriter, o);
 

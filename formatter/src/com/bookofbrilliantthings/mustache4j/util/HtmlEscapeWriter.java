@@ -5,7 +5,7 @@ import java.io.Writer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CorrectEscapeWriter
+public class HtmlEscapeWriter
     extends Writer
 {
     private final StringBuilder stringBuilder;
@@ -14,7 +14,7 @@ public class CorrectEscapeWriter
 
     private final int MIN_FLUSH_SIZE = 8 * 1024;
 
-    public CorrectEscapeWriter(Writer writer)
+    public HtmlEscapeWriter(Writer writer)
     {
         this.writer = writer;
         stringBuilder = new StringBuilder();
