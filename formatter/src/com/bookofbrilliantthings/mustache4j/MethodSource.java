@@ -2,6 +2,7 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 
 public class MethodSource
@@ -19,6 +20,12 @@ public class MethodSource
     public Class<?> getType()
     {
         return method.getReturnType();
+    }
+
+    @Override
+    public Type getGenericType()
+    {
+        return method.getGenericReturnType();
     }
 
     @Override

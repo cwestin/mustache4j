@@ -2,6 +2,7 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 
 public class FieldSource
@@ -19,6 +20,12 @@ public class FieldSource
     public Class<?> getType()
     {
         return field.getType();
+    }
+
+    @Override
+    public Type getGenericType()
+    {
+        return field.getGenericType();
     }
 
     @Override

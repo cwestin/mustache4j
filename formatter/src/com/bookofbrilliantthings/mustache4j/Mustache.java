@@ -2,7 +2,12 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.io.Reader;
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -186,6 +191,9 @@ public class Mustache
                 // check for List<T> (follow up with getGenericType())
                 if (List.class.isAssignableFrom(valueType))
                 {
+                    final Type genericType = valueSource.getGenericType();
+                    System.err.println("section OBJECT, genericType List<T>" + genericType.toString());
+
                     // TODO
                     throw new RuntimeException("List<T> field unimplemented");
                 }
@@ -193,6 +201,28 @@ public class Mustache
                 // check for Iterable<T>
                 if (Iterable.class.isAssignableFrom(valueType))
                 {
+                    final Type genericType = valueSource.getGenericType();
+                    System.err.println("section OBJECT, genericType Iterable<T>" + genericType.toString());
+                    if (genericType instanceof GenericArrayType)
+                    {
+                        System.err.println(" GenericArrayType");
+                    }
+                    else if (genericType instanceof ParameterizedType)
+                    {
+                        System.err.println(" ParameterizedType");
+                        final ParameterizedType parameterizedType = (ParameterizedType)genericType;
+                        final Type typeArgs[] = parameterizedType.getActualTypeArguments();
+                        assert typeArgs.length == 1; // Iterable<T> only takes one argument
+                    }
+                    else if (genericType instanceof TypeVariable)
+                    {
+                        System.err.println(" TypeVariable");
+                    }
+                    else if (genericType instanceof WildcardType)
+                    {
+                        System.err.println(" WildcardType");
+                    }
+
                     // TODO
                     throw new RuntimeException("Iterable<T> field unimplemented");
                 }

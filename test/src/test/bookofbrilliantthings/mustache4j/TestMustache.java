@@ -168,18 +168,6 @@ public class TestMustache
         }
     }
 
-/* TODO
-    private static void testHashMap(final MustacheRenderer mustacheRenderer,
-            final HashMap<String, ?> hashMap, final String template, final String expected)
-        throws Exception
-    {
-        final StringBuilderWriter stringWriter = new StringBuilderWriter();
-        mustacheRenderer.render(stringWriter, hashMap);
-        final String result = stringWriter.toString();
-        assertEquals(expected, result);
-    }
-*/
-
     private static void testObject(final MustacheRenderer mustacheRenderer,
             final Object o, final String expected)
         throws Exception
@@ -359,10 +347,10 @@ public class TestMustache
     public static class M4
     {
         @MustacheValue
-        boolean showList;
+        public boolean showList;
 
         @MustacheValue
-        List<M2> listM2;
+        public List<M2> listM2;
     }
 
     @Ignore // TODO

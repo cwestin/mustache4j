@@ -1,5 +1,6 @@
 package com.bookofbrilliantthings.mustache4j;
 
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 
 public abstract class ValueSource
@@ -17,6 +18,7 @@ public abstract class ValueSource
     }
 
     public abstract Class<?> getType();
+    public abstract Type getGenericType();
 
     public abstract FragmentRenderer createVariableRenderer(boolean escaped);
 
