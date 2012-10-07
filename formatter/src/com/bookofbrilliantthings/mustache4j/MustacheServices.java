@@ -8,9 +8,10 @@ public class MustacheServices
         implements MustacheLoader
     {
         @Override
-        public MustacheRenderer load(String name)
+        public MustacheRenderer load(String name, Class<?> forClass)
         {
-            throw new RuntimeException("no MustacheLoader implementation provided in MustacheServices");
+            throw new RuntimeException("can't find MustacheLoader named \"" + name +
+                    "\" for class " + forClass.getName());
         }
     }
 
@@ -24,8 +25,10 @@ public class MustacheServices
         return loader;
     }
 
-    public void setLoader(MustacheLoader loader)
+    public MustacheLoader setLoader(MustacheLoader newLoader)
     {
-        this.loader = loader;
+        final MustacheLoader oldLoader = loader;
+        loader = newLoader;
+        return oldLoader;
     }
 }

@@ -20,17 +20,19 @@ public class Mustache
         final protected ValueSource valueSource;
         final protected Class<? extends FragmentRenderer> rendererClass;
         final protected StackingParserHandler stackingParserHandler;
+        final protected MustacheServices mustacheServices;
         protected Locator locator;
 
         protected BaseHandler(LinkedList<FragmentRenderer> fragmentList, boolean inverted,
                 ValueSource valueSource, Class<? extends FragmentRenderer> rendererClass,
-                StackingParserHandler stackingParserHandler)
+                StackingParserHandler stackingParserHandler, MustacheServices mustacheServices)
         {
             this.fragmentList = fragmentList;
             this.inverted = inverted;
             this.valueSource = valueSource;
             this.rendererClass = rendererClass;
             this.stackingParserHandler = stackingParserHandler;
+            this.mustacheServices = mustacheServices;
         }
 
         @Override
@@ -76,10 +78,11 @@ public class Mustache
 
         ObjectHandler(final LinkedList<FragmentRenderer> fragmentList, boolean inverted,
                 ValueSource valueSource, Class<? extends FragmentRenderer> rendererClass,
-                StackingParserHandler stackingParserHandler, Class<?> forClass)
+                StackingParserHandler stackingParserHandler, MustacheServices mustacheServices,
+                Class<?> forClass)
             throws MustacheParserException
         {
-            super(fragmentList, inverted, valueSource, rendererClass, stackingParserHandler);
+            super(fragmentList, inverted, valueSource, rendererClass, stackingParserHandler, mustacheServices);
             this.forClass = forClass;
             valueNameMap = new HashMap<String, ValueSource>();
 
@@ -162,7 +165,8 @@ public class Mustache
             {
                 final ObjectHandler objectHandler =
                         new ObjectHandler(fragmentList, inverted, valueSource,
-                                valueSource.getConditionalRendererClass(), stackingParserHandler, forClass);
+                                valueSource.getConditionalRendererClass(), stackingParserHandler,
+                                mustacheServices, forClass);
 
                 stackingParserHandler.push(objectHandler);
                 return;
@@ -172,7 +176,8 @@ public class Mustache
             {
                 final ObjectHandler objectHandler =
                         new ObjectHandler(fragmentList, inverted, valueSource,
-                                valueSource.getStringSectionRendererClass(), stackingParserHandler, forClass);
+                                valueSource.getStringSectionRendererClass(), stackingParserHandler,
+                                mustacheServices, forClass);
 
                 stackingParserHandler.push(objectHandler);
                 return;
@@ -205,7 +210,7 @@ public class Mustache
 
                 final ObjectHandler objectHandler =
                         new ObjectHandler(fragmentList, inverted, valueSource,
-                                valueSource.getObjectRendererClass(), stackingParserHandler,
+                                valueSource.getObjectRendererClass(), stackingParserHandler, mustacheServices,
                                 (inverted ? forClass : valueType));
                 stackingParserHandler.push(objectHandler);
                 return;
@@ -239,17 +244,21 @@ public class Mustache
         public void partial(String partialName)
             throws MustacheParserException
         {
-            throw new MustacheParserException(locator, "partials unimplemented");
+            final MustacheLoader mustacheLoader = mustacheServices.getLoader();
+            final MustacheRenderer mustacheRenderer = mustacheLoader.load(partialName, forClass);
+            fragmentList.add(new WrappedMustacheRenderer(mustacheRenderer));
         }
     }
 
-    public static MustacheRenderer compile(final Reader templateReader, final Class<?> forClass)
-        throws IOException, MustacheParserException
+    public static MustacheRenderer compile(final MustacheServices mustacheServices,
+            final Reader templateReader, final Class<?> forClass)
+        throws MustacheParserException
     {
         final LinkedList<FragmentRenderer> fragmentList = new LinkedList<FragmentRenderer>();
         final StackingParserHandler stackingParserHandler = new StackingParserHandler();
         final ObjectHandler objectHandler =
-                new ObjectHandler(fragmentList, false, null, null, stackingParserHandler, forClass);
+                new ObjectHandler(fragmentList, false, null, null, stackingParserHandler,
+                        mustacheServices, forClass);
         stackingParserHandler.push(objectHandler);
 
         Template.parse(stackingParserHandler, templateReader);

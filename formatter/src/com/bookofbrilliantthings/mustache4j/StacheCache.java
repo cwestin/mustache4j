@@ -13,7 +13,8 @@ public class StacheCache
         hashMapRef = new AtomicReference<HashMap<String, MustacheRenderer>>(hashMap);
     }
 
-    public MustacheRenderer getRenderer(final String name, final MustacheLoader loader)
+    public MustacheRenderer getRenderer(final MustacheServices mustacheServices, final String name)
+        throws MustacheParserException
     {
         MustacheRenderer renderer = null;
 
@@ -26,7 +27,11 @@ public class StacheCache
 
             // load the renderer, once
             if (renderer == null)
-                renderer = loader.load(name);
+            {
+                final MustacheLoader loader = mustacheServices.getLoader();
+                // TODO renderer = loader.load(name, forClass);
+                throw new RuntimeException("unimplemented");
+            }
 
             // clone the map
             @SuppressWarnings("unchecked")

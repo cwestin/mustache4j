@@ -14,7 +14,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.bookofbrilliantthings.mustache4j.Mustache;
+import com.bookofbrilliantthings.mustache4j.MustacheLoader;
+import com.bookofbrilliantthings.mustache4j.MustacheParserException;
 import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
+import com.bookofbrilliantthings.mustache4j.MustacheServices;
 import com.bookofbrilliantthings.mustache4j.MustacheValue;
 import com.bookofbrilliantthings.mustache4j.Template;
 import com.bookofbrilliantthings.mustache4j.util.HtmlEscapeWriter;
@@ -22,6 +25,7 @@ import com.bookofbrilliantthings.mustache4j.util.StringBuilderWriter;
 
 public class TestMustache
 {
+    private final static MustacheServices mustacheServices = new MustacheServices();
 
     private final static Pattern ampPattern = Pattern.compile("&");
     private final static Pattern ltPattern = Pattern.compile("<");
@@ -114,7 +118,8 @@ public class TestMustache
 
         try
         {
-            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M0.class);
+            final MustacheRenderer mustacheRenderer1 =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M0.class);
             final M0 m0 = new M0();
             m0.x = "Fear & Loathing";
 
@@ -206,10 +211,12 @@ public class TestMustache
             m1.xfoo = "&";
             m1.bar = 3;
 
-            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M1.class);
+            final MustacheRenderer mustacheRenderer1 =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M1.class);
             testObject(mustacheRenderer1, m1, "    &amp;     3  ");
 
-            final MustacheRenderer mustacheRenderer2 = Mustache.compile(new StringReader(template2), M1.class);
+            final MustacheRenderer mustacheRenderer2 =
+                    Mustache.compile(mustacheServices, new StringReader(template2), M1.class);
             testObject(mustacheRenderer2, m1, "    &     3  ");
         }
         catch(Exception e)
@@ -251,8 +258,10 @@ public class TestMustache
 */
 
             final M2 m2 = new M2();
-            final MustacheRenderer mustacheRendererM2 = Mustache.compile(new StringReader(template1), M2.class);
-            final MustacheRenderer mustacheRendererM2a = Mustache.compile(new StringReader(template2), M2.class);
+            final MustacheRenderer mustacheRendererM2 =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M2.class);
+            final MustacheRenderer mustacheRendererM2a =
+                    Mustache.compile(mustacheServices, new StringReader(template2), M2.class);
 
             m2.hasPi = false;
             m2.hasPiB = Boolean.FALSE;
@@ -315,10 +324,14 @@ public class TestMustache
             testHashMap(mustacheRendererH1, hashMap1, template1, Double.toString(Math.PI));
 */
 
-            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M3.class);
-            final MustacheRenderer mustacheRenderer2 = Mustache.compile(new StringReader(template2), M3.class);
-            final MustacheRenderer mustacheRenderer3 = Mustache.compile(new StringReader(template3), M3.class);
-            final MustacheRenderer mustacheRenderer4 = Mustache.compile(new StringReader(template4), M3.class);
+            final MustacheRenderer mustacheRenderer1 =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M3.class);
+            final MustacheRenderer mustacheRenderer2 =
+                    Mustache.compile(mustacheServices, new StringReader(template2), M3.class);
+            final MustacheRenderer mustacheRenderer3 =
+                    Mustache.compile(mustacheServices, new StringReader(template3), M3.class);
+            final MustacheRenderer mustacheRenderer4 =
+                    Mustache.compile(mustacheServices, new StringReader(template4), M3.class);
 
             final M3 m3 = new M3();
             m3.flubber = '\'';
@@ -360,7 +373,8 @@ public class TestMustache
 
         try
         {
-            final MustacheRenderer mustacheRenderer = Mustache.compile(new StringReader(template1), M4.class);
+            final MustacheRenderer mustacheRenderer =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M4.class);
 
             final M4 m4 = new M4();
 
@@ -412,7 +426,8 @@ public class TestMustache
         try
         {
             final String template1 = "{{baz}} {{foo}}";
-            final MustacheRenderer mustacheRenderer = Mustache.compile(new StringReader(template1), M5.class);
+            final MustacheRenderer mustacheRenderer =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M5.class);
             final M5 m5 = new M5();
             testObject(mustacheRenderer, m5, "bar 42");
         }
@@ -466,8 +481,10 @@ public class TestMustache
 
         try
         {
-            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M6.class);
-            final MustacheRenderer mustacheRenderer2 = Mustache.compile(new StringReader(template2), M6.class);
+            final MustacheRenderer mustacheRenderer1 =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M6.class);
+            final MustacheRenderer mustacheRenderer2 =
+                    Mustache.compile(mustacheServices, new StringReader(template2), M6.class);
 
             final M6 m6 = new M6();
 
@@ -514,10 +531,14 @@ public class TestMustache
 
         try
         {
-            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M7.class);
-            final MustacheRenderer mustacheRenderer2 = Mustache.compile(new StringReader(template2), M7.class);
-            final MustacheRenderer mustacheRenderer3 = Mustache.compile(new StringReader(template3), M7.class);
-            final MustacheRenderer mustacheRenderer4 = Mustache.compile(new StringReader(template4), M7.class);
+            final MustacheRenderer mustacheRenderer1 =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M7.class);
+            final MustacheRenderer mustacheRenderer2 =
+                    Mustache.compile(mustacheServices, new StringReader(template2), M7.class);
+            final MustacheRenderer mustacheRenderer3 =
+                    Mustache.compile(mustacheServices, new StringReader(template3), M7.class);
+            final MustacheRenderer mustacheRenderer4 =
+                    Mustache.compile(mustacheServices, new StringReader(template4), M7.class);
 
             final M7 m7 = new M7();
 
@@ -540,6 +561,51 @@ public class TestMustache
         catch(Exception e)
         {
             fail(e.toString());
+        }
+    }
+
+    @Test
+    public void testPartials()
+    {
+        final String template1 = "in template1\n{{> testPartials/template2}}\nback to template1";
+        final String template2 = " {{pi}} ";
+
+        final MustacheLoader oldLoader = mustacheServices.getLoader();
+
+        // add a new loader to the chain
+        final MustacheLoader mustacheLoader = new MustacheLoader()
+        {
+            @Override
+            public MustacheRenderer load(String name, Class<?> forClass)
+                    throws MustacheParserException
+            {
+                if (name.equals("testPartials/template2"))
+                    return Mustache.compile(mustacheServices, new StringReader(template2), forClass);
+
+                return oldLoader.load(name, forClass);
+            }
+        };
+
+        mustacheServices.setLoader(mustacheLoader);
+
+        try
+        {
+            final MustacheRenderer renderer1 =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M2.class);
+            final M2 m2 = new M2();
+            m2.pi = Math.PI;
+
+            testObject(renderer1, m2,
+                    "in template1\n " + Double.toString(Math.PI) + " \nback to template1");;
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+        finally
+        {
+            // restore previous loader
+            mustacheServices.setLoader(oldLoader);
         }
     }
 }

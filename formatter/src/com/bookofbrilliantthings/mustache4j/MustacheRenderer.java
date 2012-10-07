@@ -25,4 +25,10 @@ public class MustacheRenderer
         // flush the filter, if it hasn't been flushed since it's last write
         switchableWriter.setFiltered(false);
     }
+
+    void renderNested(SwitchableWriter switchableWriter, Object o)
+        throws Exception
+    {
+        objectRenderer.render(switchableWriter, o);
+    }
 }
