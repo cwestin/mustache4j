@@ -45,6 +45,9 @@ public class HtmlEscapeWriter
     public Writer append(CharSequence csq, int start, int end)
         throws IOException
     {
+        assert start >= 0;
+        assert end <= csq.length();
+
         checkOpen();
         stringBuilder.append(csq, start, end);
         maybeFlush();
@@ -124,6 +127,9 @@ public class HtmlEscapeWriter
     public void write(char[] cbuf, int off, int len)
         throws IOException
     {
+        assert off >= 0;
+        assert len >= 0;
+
         checkOpen();
         stringBuilder.append(cbuf, off, len);
         maybeFlush();
@@ -151,6 +157,9 @@ public class HtmlEscapeWriter
     public void write(String str, int off, int len)
         throws IOException
     {
+        assert off >= 0;
+        assert len >= 0;
+
         checkOpen();
         stringBuilder.append(str, off, off + len);
         maybeFlush();

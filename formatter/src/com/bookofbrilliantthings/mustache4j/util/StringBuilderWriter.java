@@ -34,6 +34,36 @@ public class StringBuilderWriter
     }
 
     @Override
+    public Writer append(char c)
+        throws IOException
+    {
+        checkOpen();
+        stringBuilder.append(c);
+        return this;
+    }
+
+    @Override
+    public Writer append(CharSequence csq)
+        throws IOException
+    {
+        checkOpen();
+        stringBuilder.append(csq);
+        return this;
+    }
+
+    @Override
+    public Writer append(CharSequence csq, int start, int end)
+        throws IOException
+    {
+        assert start >= 0;
+        assert end <= csq.length();
+
+        checkOpen();
+        stringBuilder.append(csq, start, end);
+        return this;
+    }
+
+    @Override
     public void close()
         throws IOException
     {
@@ -44,47 +74,37 @@ public class StringBuilderWriter
         }
     }
 
-    private final static String ALREADY_CLOSED = "Writer is already closed";
-
     @Override
     public void flush()
         throws IOException
     {
-        if (isClosed)
-            throw new IOException(ALREADY_CLOSED);
+        checkOpen();
     }
 
     @Override
     public void write(char buf[])
         throws IOException
     {
-        if (isClosed)
-            throw new IOException(ALREADY_CLOSED);
-
+        checkOpen();
         stringBuilder.append(buf);
     }
 
     @Override
-    public void write(char buf[], int offset, int length)
+    public void write(char buf[], int off, int len)
         throws IOException
     {
-        assert offset >= 0;
-        assert length >= 0;
+        assert off >= 0;
+        assert len >= 0;
 
-        if (isClosed)
-            throw new IOException(ALREADY_CLOSED);
-
-        if (length > 0)
-            stringBuilder.append(buf, offset, length);
+        checkOpen();
+        stringBuilder.append(buf, off, len);
     }
 
     @Override
     public void write(int c)
         throws IOException
     {
-        if (isClosed)
-            throw new IOException(ALREADY_CLOSED);
-
+        checkOpen();
         stringBuilder.append((char)c);
     }
 
@@ -92,23 +112,25 @@ public class StringBuilderWriter
     public void write(String s)
         throws IOException
     {
-        if (isClosed)
-            throw new IOException(ALREADY_CLOSED);
-
+        checkOpen();
         stringBuilder.append(s);
     }
 
     @Override
-    public void write(String s, int offset, int length)
+    public void write(String s, int off, int len)
         throws IOException
     {
-        assert offset >= 0;
-        assert length >= 0;
+        assert off >= 0;
+        assert len >= 0;
 
+        checkOpen();
+        stringBuilder.append(s, off, off + len);
+    }
+
+    private void checkOpen()
+        throws IOException
+    {
         if (isClosed)
-            throw new IOException(ALREADY_CLOSED);
-
-        if (length > 0)
-            stringBuilder.append(s, offset, offset + length);
+            throw new IOException(new IllegalStateException("stream is already closed"));
     }
 }
