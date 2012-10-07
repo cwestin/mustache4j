@@ -53,6 +53,25 @@ public class TemplateRecreator
     }
 
     @Override
+    public void partial(String partialName)
+        throws MustacheParserException
+    {
+        stringBuilder.append("{{> ");
+        stringBuilder.append(partialName);
+        stringBuilder.append("}}");
+    }
+
+    @Override
+    public void unescape(String varName)
+        throws MustacheParserException
+    {
+        stringBuilder.append("{{& ");
+        stringBuilder.append(varName);
+        stringBuilder.append("}}");
+
+    }
+
+    @Override
     public void comment(String comment)
         throws MustacheParserException
     {

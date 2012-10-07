@@ -59,6 +59,16 @@ public class ParserHandler
     {
     }
 
+    public void partial(String partialName)
+        throws MustacheParserException
+    {
+    }
+
+    public void unescape(String varName)
+        throws MustacheParserException
+    {
+    }
+
     /**
      * A comment appeared in the template.
      *

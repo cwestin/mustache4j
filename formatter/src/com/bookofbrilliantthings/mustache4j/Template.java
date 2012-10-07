@@ -41,17 +41,21 @@ public class Template
         COMMENT,
         COMMENT_CLOSE,
 
-        PARTIAL,
-        PARTIAL_CLOSE,
-
-        UNESCAPE,
-        UNESCAPE_CLOSE,
+        SPECIAL,
+        SPECIAL_NAME,
+        SPECIAL_CLOSE,
 
         DELIMITER_ASSIGNMENT,
 
         UNEXPECTED_CHAR,
         UNEXPECTED_EOF,
         EOF
+    }
+
+    enum SpecialType
+    {
+        PARTIAL,
+        UNESCAPE,
     }
 
     public static void parse(final ParserHandler parserHandler, final Reader templateReader)
@@ -64,6 +68,7 @@ public class Template
         final LinkedList<String> sectionStack = new LinkedList<String>();
         boolean inverted = false;
 
+        SpecialType specialType = SpecialType.PARTIAL;
         State state = State.BEGIN;
         while(true)
         {
@@ -158,13 +163,15 @@ public class Template
 
                 if (c == '>')
                 {
-                    state = State.PARTIAL;
+                    specialType = SpecialType.PARTIAL;
+                    state = State.SPECIAL;
                     break;
                 }
 
                 if (c == '&')
                 {
-                    state = State.UNESCAPE;
+                    specialType = SpecialType.UNESCAPE;
+                    state = State.SPECIAL;
                     break;
                 }
 
@@ -254,7 +261,7 @@ public class Template
                 if (c == '}')
                 {
                     final String secName = stringBuilder.toString();
-                    sectionStack.addFirst(secName);
+                    sectionStack.addFirst(secName); // push the name of the section we're entering
                     parserHandler.sectionBegin(secName, inverted);
                     stringBuilder.setLength(0);
                     inverted = false;
@@ -290,7 +297,7 @@ public class Template
                 if (Character.isJavaIdentifierPart(c))
                 {
                     stringBuilder.append((char)c);
-                    // no change of state;
+                    // no change of state
                     break;
                 }
 
@@ -310,8 +317,8 @@ public class Template
                         throw new MustacheParserException(reader, "mismatched section name closed");
 
                     parserHandler.sectionEnd(secName);
-                    sectionStack.removeFirst();
                     stringBuilder.setLength(0);
+                    sectionStack.removeFirst();
                     state = State.BEGIN;
                     break;
                 }
@@ -354,10 +361,91 @@ public class Template
                 state = State.COMMENT;
                 break;
 
-            case PARTIAL:
-            case PARTIAL_CLOSE:
-            case UNESCAPE:
-            case UNESCAPE_CLOSE:
+            case SPECIAL:
+                c = reader.read();
+
+                if (Character.isSpaceChar(c))
+                    break; // no state change
+
+                if (Character.isJavaIdentifierStart(c))
+                {
+                    stringBuilder.append((char)c);
+                    state = State.SPECIAL_NAME;
+                    break;
+                }
+
+                if (c == -1)
+                {
+                    state = State.UNEXPECTED_EOF;
+                    break;
+                }
+
+                state = State.UNEXPECTED_CHAR;
+                break;
+
+            case SPECIAL_NAME:
+                c = reader.read();
+
+                // allow additional characters that might appear in filenames in partials
+                if (Character.isJavaIdentifierPart(c) ||
+                        ((specialType == SpecialType.PARTIAL) && ("~-_./".indexOf(c) >= 0)))
+                {
+                    stringBuilder.append((char)c);
+                    break; // no state change
+                }
+
+                // allow a wider range of characters
+                if (specialType == SpecialType.PARTIAL)
+                {
+
+                }
+
+                if (c == '}')
+                {
+                    state = State.SPECIAL_CLOSE;
+                    break;
+                }
+
+                if (c == -1)
+                {
+                    state = State.UNEXPECTED_EOF;
+                    break;
+                }
+
+                state = State.UNEXPECTED_CHAR;
+                break;
+
+            case SPECIAL_CLOSE:
+                c = reader.read();
+
+                if (c == '}')
+                {
+                    final String specialName = stringBuilder.toString();
+                    switch(specialType)
+                    {
+                    case PARTIAL:
+                        parserHandler.partial(specialName);
+                        break;
+
+                    case UNESCAPE:
+                        parserHandler.unescape(specialName);
+                        break;
+                    }
+
+                    stringBuilder.setLength(0);
+                    state = State.BEGIN;
+                    break;
+                }
+
+                if (c == -1)
+                {
+                    state = State.UNEXPECTED_EOF;
+                    break;
+                }
+
+                state = State.UNEXPECTED_CHAR;
+                break;
+
             case DELIMITER_ASSIGNMENT:
                 throw new MustacheParserException(reader, "unimplemented feature " + state);
 

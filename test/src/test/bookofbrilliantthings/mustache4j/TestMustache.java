@@ -154,6 +154,8 @@ public class TestMustache
                 "{{a}}{{#b}}    {{x}}{{#c}} a {{^d}}b{{/d}} c x{{/c}}{{/b}}");
             testCorrectTemplate(
                 "{a{b}c} {!not a comment}{{!this is a comment }x{}}");
+            testCorrectTemplate(
+                "{{foo}}{{^bar}}{{> wombat}} {{& baz}}{{/bar}}");
         }
         catch(Exception e)
         {
