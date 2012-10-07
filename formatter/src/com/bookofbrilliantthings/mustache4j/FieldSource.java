@@ -22,9 +22,9 @@ public class FieldSource
     }
 
     @Override
-    public VariableRenderer createVariableRenderer()
+    public VariableRenderer createVariableRenderer(boolean escaped)
     {
-        return new FieldRenderer(field);
+        return new FieldRenderer(escaped, field);
     }
 
     @Override

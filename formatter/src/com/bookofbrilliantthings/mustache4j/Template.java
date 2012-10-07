@@ -394,12 +394,6 @@ public class Template
                     break; // no state change
                 }
 
-                // allow a wider range of characters
-                if (specialType == SpecialType.PARTIAL)
-                {
-
-                }
-
                 if (c == '}')
                 {
                     state = State.SPECIAL_CLOSE;
@@ -428,7 +422,7 @@ public class Template
                         break;
 
                     case UNESCAPE:
-                        parserHandler.unescape(specialName);
+                        parserHandler.unescaped(specialName);
                         break;
                     }
 

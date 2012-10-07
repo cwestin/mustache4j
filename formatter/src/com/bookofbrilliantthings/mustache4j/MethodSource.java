@@ -22,9 +22,9 @@ public class MethodSource
     }
 
     @Override
-    public VariableRenderer createVariableRenderer()
+    public VariableRenderer createVariableRenderer(boolean escaped)
     {
-        return new MethodReturnRenderer(method);
+        return new MethodReturnRenderer(escaped, method);
     }
 
     @Override

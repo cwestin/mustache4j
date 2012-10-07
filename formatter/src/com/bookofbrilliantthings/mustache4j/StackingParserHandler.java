@@ -67,6 +67,20 @@ public class StackingParserHandler
     }
 
     @Override
+    public void partial(String partialName)
+        throws MustacheParserException
+    {
+        topHandler.partial(partialName);
+    }
+
+    @Override
+    public void unescaped(String varName)
+        throws MustacheParserException
+    {
+        topHandler.unescaped(varName);
+    }
+
+    @Override
     public void comment(String comment)
         throws MustacheParserException
     {

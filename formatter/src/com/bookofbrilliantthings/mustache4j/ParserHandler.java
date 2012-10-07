@@ -64,7 +64,7 @@ public class ParserHandler
     {
     }
 
-    public void unescape(String varName)
+    public void unescaped(String varName)
         throws MustacheParserException
     {
     }

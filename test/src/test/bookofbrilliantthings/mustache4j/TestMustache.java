@@ -189,6 +189,7 @@ public class TestMustache
     public void testVariables()
     {
         final String template1 = "    {{foo}}     {{bar}}  ";
+        final String template2 = "    {{& foo}}     {{bar}}  ";
 
         try
         {
@@ -205,8 +206,11 @@ public class TestMustache
             m1.xfoo = "&";
             m1.bar = 3;
 
-            final MustacheRenderer mustacheRendererM1 = Mustache.compile(new StringReader(template1), M1.class);
-            testObject(mustacheRendererM1, m1, "    &amp;     3  ");
+            final MustacheRenderer mustacheRenderer1 = Mustache.compile(new StringReader(template1), M1.class);
+            testObject(mustacheRenderer1, m1, "    &amp;     3  ");
+
+            final MustacheRenderer mustacheRenderer2 = Mustache.compile(new StringReader(template2), M1.class);
+            testObject(mustacheRenderer2, m1, "    &     3  ");
         }
         catch(Exception e)
         {

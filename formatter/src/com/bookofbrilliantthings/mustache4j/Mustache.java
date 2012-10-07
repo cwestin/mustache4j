@@ -139,7 +139,7 @@ public class Mustache
                         "no MustacheValue named '" + varName + "' in object");
 
             final ValueSource valueSource = valueNameMap.get(varName);
-            fragmentList.add(valueSource.createVariableRenderer());
+            fragmentList.add(valueSource.createVariableRenderer(true));
         }
 
         @Override
@@ -221,6 +221,25 @@ public class Mustache
             throws MustacheParserException
         {
             stackingParserHandler.pop(valueSource.createRenderer(rendererClass, fragmentList, inverted));
+        }
+
+        @Override
+        public void unescaped(final String varName)
+            throws MustacheParserException
+        {
+            if (!valueNameMap.containsKey(varName))
+                throw new MustacheParserException(locator,
+                        "no MustacheValue named '" + varName + "' in object");
+
+            final ValueSource valueSource = valueNameMap.get(varName);
+            fragmentList.add(valueSource.createVariableRenderer(false));
+        }
+
+        @Override
+        public void partial(String partialName)
+            throws MustacheParserException
+        {
+            throw new MustacheParserException(locator, "partials unimplemented");
         }
     }
 

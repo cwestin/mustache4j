@@ -7,9 +7,9 @@ public class FieldRenderer
 {
     private final Field field;
 
-    public FieldRenderer(final Field field)
+    public FieldRenderer(boolean escaped, final Field field)
     {
-        super(field.getType());
+        super(escaped, field.getType());
         this.field = field;
     }
 

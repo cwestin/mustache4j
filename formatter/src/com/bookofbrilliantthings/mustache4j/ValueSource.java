@@ -18,7 +18,7 @@ public abstract class ValueSource
 
     public abstract Class<?> getType();
 
-    public abstract FragmentRenderer createVariableRenderer();
+    public abstract FragmentRenderer createVariableRenderer(boolean escaped);
 
     public abstract Class<? extends FragmentRenderer> getObjectRendererClass();
     public abstract Class<? extends FragmentRenderer> getConditionalRendererClass();
