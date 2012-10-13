@@ -74,4 +74,10 @@ public class FieldSource
                     rendererClass.getName(), e);
         }
     }
+
+    @Override
+    public Class<? extends FragmentRenderer> getIterableRendererClass()
+    {
+        return IterableFieldRenderer.class;
+    }
 }

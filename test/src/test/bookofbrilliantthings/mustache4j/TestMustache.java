@@ -354,7 +354,6 @@ public class TestMustache
         public List<M2> listM2;
     }
 
-    @Ignore // TODO
     @Test
     public void testLists()
     {

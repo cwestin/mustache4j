@@ -74,4 +74,10 @@ public class MethodSource
                     rendererClass.getName(), e);
         }
     }
+
+    @Override
+    public Class<? extends FragmentRenderer> getIterableRendererClass()
+    {
+        return IterableMethodRenderer.class;
+    }
 }

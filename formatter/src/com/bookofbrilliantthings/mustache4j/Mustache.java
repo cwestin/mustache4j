@@ -2,16 +2,11 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.io.Reader;
 import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
 import java.util.HashMap;
 import java.util.LinkedList;
-
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 public class Mustache
 {
@@ -188,43 +183,27 @@ public class Mustache
 
             if (pt == PrimitiveType.OBJECT)
             {
-                // check for List<T> (follow up with getGenericType())
-                if (List.class.isAssignableFrom(valueType))
-                {
-                    final Type genericType = valueSource.getGenericType();
-                    System.err.println("section OBJECT, genericType List<T>" + genericType.toString());
-
-                    // TODO
-                    throw new RuntimeException("List<T> field unimplemented");
-                }
-
                 // check for Iterable<T>
                 if (Iterable.class.isAssignableFrom(valueType))
                 {
-                    final Type genericType = valueSource.getGenericType();
-                    System.err.println("section OBJECT, genericType Iterable<T>" + genericType.toString());
-                    if (genericType instanceof GenericArrayType)
-                    {
-                        System.err.println(" GenericArrayType");
-                    }
-                    else if (genericType instanceof ParameterizedType)
-                    {
-                        System.err.println(" ParameterizedType");
-                        final ParameterizedType parameterizedType = (ParameterizedType)genericType;
-                        final Type typeArgs[] = parameterizedType.getActualTypeArguments();
-                        assert typeArgs.length == 1; // Iterable<T> only takes one argument
-                    }
-                    else if (genericType instanceof TypeVariable)
-                    {
-                        System.err.println(" TypeVariable");
-                    }
-                    else if (genericType instanceof WildcardType)
-                    {
-                        System.err.println(" WildcardType");
-                    }
+                    if (inverted)
+                        throw new MustacheParserException(locator, "section \"" + secName +
+                                "\" can't be inverted, because it's an Iterable<?>");
 
-                    // TODO
-                    throw new RuntimeException("Iterable<T> field unimplemented");
+                    final ParameterizedType iterableType = (ParameterizedType)valueSource.getGenericType();
+                    final Type argTypes[] = iterableType.getActualTypeArguments();
+                    if (!(argTypes[0] instanceof Class<?>))
+                        throw new MustacheParserException(locator, "Iterable type parameter must be concrete");
+                    final Class<?> iteratedClass = (Class<?>)argTypes[0];
+                    // TODO later, we can chase it up the declarations if it's a TypeVariable, and get
+                    // the instantiated type
+
+                    final ObjectHandler objectHandler =
+                            new ObjectHandler(fragmentList, inverted, valueSource,
+                                    valueSource.getIterableRendererClass(), stackingParserHandler,
+                                    mustacheServices, iteratedClass);
+                    stackingParserHandler.push(objectHandler);
+                    return;
                 }
 
                 // check for HashMap<String, T>

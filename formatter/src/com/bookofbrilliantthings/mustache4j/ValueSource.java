@@ -25,6 +25,7 @@ public abstract class ValueSource
     public abstract Class<? extends FragmentRenderer> getObjectRendererClass();
     public abstract Class<? extends FragmentRenderer> getConditionalRendererClass();
     public abstract Class<? extends FragmentRenderer> getStringSectionRendererClass();
+    public abstract Class<? extends FragmentRenderer> getIterableRendererClass();
 
     public abstract <T extends FragmentRenderer> T createRenderer(Class<T> rendererClass,
             LinkedList<FragmentRenderer> fragmentList, boolean inverted)
