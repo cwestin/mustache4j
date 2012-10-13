@@ -274,7 +274,7 @@ public class Mustache
         {
             final MustacheLoader mustacheLoader = mustacheServices.getLoader();
             final MustacheRenderer mustacheRenderer = mustacheLoader.load(partialName, forClass);
-            fragmentList.add(new WrappedMustacheRenderer(mustacheRenderer));
+            fragmentList.add(mustacheRenderer);
         }
     }
 
@@ -291,7 +291,7 @@ public class Mustache
 
         Template.parse(stackingParserHandler, templateReader);
 
-        return new MustacheRenderer(fragmentList, forClass);
+        return new StaticRenderer(fragmentList, forClass);
     }
 
 /* DISABLED
