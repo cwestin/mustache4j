@@ -3,21 +3,28 @@ package com.bookofbrilliantthings.mustache4j;
 public class MustacheServices
 {
     private MustacheLoader loader;
+    private final boolean dynamic;
 
-    private static class NoLoader
+    private static class DefaultLoader
         implements MustacheLoader
     {
         @Override
-        public MustacheRenderer load(String name, Class<?> forClass)
+        public MustacheEdition load(MustacheServices services, String name, Class<?> forClass)
         {
-            throw new RuntimeException("can't find MustacheLoader named \"" + name +
+            throw new RuntimeException("can't find MustacheRenderer named \"" + name +
                     "\" for class " + forClass.getName());
         }
     }
 
-    public MustacheServices()
+    public MustacheServices(boolean dynamic)
     {
-        loader = new NoLoader();
+        this.dynamic = dynamic;
+        loader = new DefaultLoader();
+    }
+
+    public boolean getDynamic()
+    {
+        return dynamic;
     }
 
     public MustacheLoader getLoader()

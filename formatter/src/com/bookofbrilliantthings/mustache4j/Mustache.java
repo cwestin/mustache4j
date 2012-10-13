@@ -272,9 +272,17 @@ public class Mustache
         public void partial(String partialName)
             throws MustacheParserException
         {
-            final MustacheLoader mustacheLoader = mustacheServices.getLoader();
-            final MustacheRenderer mustacheRenderer = mustacheLoader.load(partialName, forClass);
-            fragmentList.add(mustacheRenderer);
+            if (!mustacheServices.getDynamic())
+            {
+                final MustacheLoader mustacheLoader = mustacheServices.getLoader();
+                final MustacheEdition edition = mustacheLoader.load(mustacheServices, partialName, forClass);
+                fragmentList.add(edition.getRenderer());
+            }
+            else
+            {
+                final DynamicRenderer renderer = new DynamicRenderer(mustacheServices, partialName, forClass);
+                fragmentList.add(renderer);
+            }
         }
     }
 

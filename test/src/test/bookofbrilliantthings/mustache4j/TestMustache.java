@@ -14,6 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.bookofbrilliantthings.mustache4j.Mustache;
+import com.bookofbrilliantthings.mustache4j.MustacheEdition;
 import com.bookofbrilliantthings.mustache4j.MustacheLoader;
 import com.bookofbrilliantthings.mustache4j.MustacheParserException;
 import com.bookofbrilliantthings.mustache4j.MustacheRenderer;
@@ -25,7 +26,7 @@ import com.bookofbrilliantthings.mustache4j.util.StringBuilderWriter;
 
 public class TestMustache
 {
-    private final static MustacheServices mustacheServices = new MustacheServices();
+    private final static MustacheServices mustacheServices = new MustacheServices(false);
 
     private final static Pattern ampPattern = Pattern.compile("&");
     private final static Pattern ltPattern = Pattern.compile("<");
@@ -564,13 +565,13 @@ public class TestMustache
         final MustacheLoader mustacheLoader = new MustacheLoader()
         {
             @Override
-            public MustacheRenderer load(String name, Class<?> forClass)
+            public MustacheEdition load(MustacheServices services, String name, Class<?> forClass)
                     throws MustacheParserException
             {
                 if (name.equals("testPartials/template2"))
-                    return Mustache.compile(mustacheServices, new StringReader(template2), forClass);
+                    return new MustacheEdition(Mustache.compile(services, new StringReader(template2), forClass));
 
-                return oldLoader.load(name, forClass);
+                return oldLoader.load(services, name, forClass);
             }
         };
 

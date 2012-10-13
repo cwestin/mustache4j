@@ -1,5 +1,7 @@
 package com.bookofbrilliantthings.mustache4j;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 public class DynamicRenderer
@@ -7,23 +9,39 @@ public class DynamicRenderer
 {
     private final String templateName;
     private final Class<?> forClass;
-    private final MustacheServices mustacheServices;
+    private final MustacheServices services;
+    private final AtomicReference<MustacheEdition> editionRef;
 
-    public DynamicRenderer(String templateName, Class<?> forClass, MustacheServices mustacheServices)
+    public DynamicRenderer(MustacheServices services, String templateName, Class<?> forClass)
     {
+        this.services = services;
         this.templateName = templateName;
         this.forClass = forClass;
-        this.mustacheServices = mustacheServices;
+        editionRef = new AtomicReference<MustacheEdition>();
     }
 
     @Override
     public void render(SwitchableWriter switchableWriter, Object o)
             throws Exception
     {
-        // look up the template, if there's a newer version
-        final MustacheLoader mustacheLoader = mustacheServices.getLoader();
+        MustacheEdition edition = editionRef.get();
 
-        //
-        // TODO Auto-generated method stub
+        // look up the template, if there's a newer version
+        while(true)
+        {
+            if ((edition == null) || edition.newerAvailable())
+            {
+                final MustacheLoader loader = services.getLoader();
+                final MustacheEdition newEdition = loader.load(services, templateName, forClass);
+                if (editionRef.compareAndSet(edition, newEdition))
+                {
+                    edition = newEdition;
+                    break;
+                }
+            }
+        }
+
+        final MustacheRenderer renderer = edition.getRenderer();
+        renderer.render(switchableWriter, o);
     }
 }
