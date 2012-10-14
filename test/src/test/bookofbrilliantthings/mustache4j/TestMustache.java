@@ -217,6 +217,15 @@ public class TestMustache
 
     public static class M2
     {
+        M2()
+        {
+        }
+
+        M2(double d)
+        {
+            pi = d;
+        }
+
         @MustacheValue(tagname = "hazPi")
         public boolean hasPi;
 
@@ -665,6 +674,8 @@ public class TestMustache
         try
         {
             final M4 m4 = new M4();
+            m4.listM2 = new LinkedList<M2>();
+            m4.listM2.add(new M2(42.17));
 
             // prepare to load some stuff; simulate this coming from a file system or similar
             cacheTestLoader.templateMap.put("outer", new VersionedTemplate("outer", 1));
@@ -676,6 +687,11 @@ public class TestMustache
             // put in a new version of the outer template, and see if we get it
             cacheTestLoader.templateMap.put("outer", new VersionedTemplate("outer\n{{> inner}}", 2));
             testObject(outerRenderer, m4, "outer\nshowList:false\n");
+
+            // put in a new version of the inner template, and see if we get it
+            cacheTestLoader.templateMap.put("inner", new VersionedTemplate(
+                    "{{#listM2}}{{pi}}\n{{/listM2}}", 2));
+            testObject(outerRenderer, m4, "outer\n42.17\n");
         }
         catch(Exception e)
         {
