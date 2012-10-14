@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -594,6 +595,93 @@ public class TestMustache
         {
             // restore previous loader
             mustacheServices.setLoader(oldLoader);
+        }
+    }
+
+    private static class VersionedTemplate
+    {
+        final String template;
+        final int version;
+
+        VersionedTemplate(String template, int version)
+        {
+            this.template = template;
+            this.version = version;
+        }
+    }
+
+    private static class CacheTestLoader
+        implements MustacheLoader
+    {
+        final HashMap<String, VersionedTemplate> templateMap;
+
+        CacheTestLoader()
+        {
+            templateMap = new HashMap<String, VersionedTemplate>();
+        }
+
+        private class TestEdition
+            extends MustacheEdition
+        {
+            private final String name;
+            private final int version;
+
+            public TestEdition(MustacheRenderer renderer, String name, int version)
+            {
+                super(renderer);
+                this.name = name;
+                this.version = version;
+            }
+
+            @Override
+            public boolean newerAvailable()
+            {
+                final VersionedTemplate vTemplate = templateMap.get(name);
+                return (vTemplate.version > version);
+            }
+        }
+
+        @Override
+        public MustacheEdition load(MustacheServices services, String name,
+                Class<?> forClass) throws MustacheParserException
+        {
+            final VersionedTemplate vTemplate = templateMap.get(name);
+            if (vTemplate == null)
+                throw new MustacheParserException("can't find template named \"" + name + "\"");
+
+            final MustacheRenderer renderer = Mustache.compile(
+                    services, new StringReader(vTemplate.template), forClass);
+            return new TestEdition(renderer, name, vTemplate.version);
+        }
+    }
+
+    @Test
+    public void testCache()
+    {
+        final CacheTestLoader cacheTestLoader = new CacheTestLoader();
+        final MustacheServices services = new MustacheServices(true);
+        services.setLoader(cacheTestLoader);
+
+        try
+        {
+            final M4 m4 = new M4();
+            MustacheEdition edition;
+
+            // prepare to load some stuff; simulate this coming from a file system or similar
+            cacheTestLoader.templateMap.put("outer", new VersionedTemplate("outer", 1));
+            cacheTestLoader.templateMap.put("inner", new VersionedTemplate("showList:{{showList}}\n", 1));
+
+            edition = services.getEdition("outer", M4.class);
+            testObject(edition.getRenderer(), m4, "outer");
+
+            // put in a new version of the outer template, and see if we get it
+            cacheTestLoader.templateMap.put("outer", new VersionedTemplate("outer\n{{> inner}}", 2));
+            edition = services.getEdition("outer", M4.class);
+            testObject(edition.getRenderer(), m4, "outer\nshowList:false\n");
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
         }
     }
 }

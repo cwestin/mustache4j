@@ -253,8 +253,7 @@ public class Mustache
         {
             if (!mustacheServices.getDynamic())
             {
-                final MustacheLoader mustacheLoader = mustacheServices.getLoader();
-                final MustacheEdition edition = mustacheLoader.load(mustacheServices, partialName, forClass);
+                final MustacheEdition edition = mustacheServices.getEdition(partialName, forClass);
                 fragmentList.add(edition.getRenderer());
             }
             else

@@ -24,20 +24,21 @@ public class DynamicRenderer
     public void render(SwitchableWriter switchableWriter, Object o)
             throws Exception
     {
-        MustacheEdition edition = editionRef.get();
+        MustacheEdition edition = null;
 
-        // look up the template, if there's a newer version
         while(true)
         {
-            if ((edition == null) || edition.newerAvailable())
+            edition = editionRef.get();
+
+            if ((edition != null) && !edition.newerAvailable())
+                break;
+
+            // get the latest edition, and try to swap it in
+            final MustacheEdition newEdition = services.getEdition(templateName, forClass);
+            if (editionRef.compareAndSet(edition, newEdition))
             {
-                final MustacheLoader loader = services.getLoader();
-                final MustacheEdition newEdition = loader.load(services, templateName, forClass);
-                if (editionRef.compareAndSet(edition, newEdition))
-                {
-                    edition = newEdition;
-                    break;
-                }
+                edition = newEdition;
+                break;
             }
         }
 
