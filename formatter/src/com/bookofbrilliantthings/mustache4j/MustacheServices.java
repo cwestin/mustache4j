@@ -7,7 +7,7 @@ import com.bookofbrilliantthings.mustache4j.util.Pair;
 
 public class MustacheServices
 {
-    private final AtomicReference<HashMap<Pair<String, Class<?>>, MustacheEdition>> cacheRef;
+    private final AtomicReference<HashMap<Pair<String, Class<?>>, MustacheRenderer>> cacheRef;
     private final boolean dynamic;
     private MustacheLoader loader;
 
@@ -24,8 +24,8 @@ public class MustacheServices
 
     public MustacheServices(boolean dynamic)
     {
-        cacheRef = new AtomicReference<HashMap<Pair<String, Class<?>>, MustacheEdition>>(
-                new HashMap<Pair<String, Class<?>>, MustacheEdition>());
+        cacheRef = new AtomicReference<HashMap<Pair<String, Class<?>>, MustacheRenderer>>(
+                new HashMap<Pair<String, Class<?>>, MustacheRenderer>());
         this.dynamic = dynamic;
         loader = new DefaultLoader();
     }
@@ -47,38 +47,46 @@ public class MustacheServices
         return oldLoader;
     }
 
-    public MustacheEdition getEdition(String name, Class<?> forClass)
+    public MustacheRenderer getRenderer(String name, Class<?> forClass)
         throws MustacheParserException
     {
         final Pair<String, Class<?>> cacheKey = new Pair<String, Class<?>>(name, forClass);
 
         // keep trying this until we find a shared copy in the cache map
+        MustacheRenderer loadedRenderer = null;
         while(true)
         {
-            final HashMap<Pair<String, Class<?>>, MustacheEdition> cacheMap = cacheRef.get();
-            MustacheEdition edition = cacheMap.get(cacheKey);
-            if (edition != null)
-            {
-                if (!edition.newerAvailable())
-                    return edition;
-            }
+            final HashMap<Pair<String, Class<?>>, MustacheRenderer> cacheMap = cacheRef.get();
+            MustacheRenderer renderer = cacheMap.get(cacheKey);
+            if (renderer != null)
+                return renderer;
 
-            final MustacheLoader loader = getLoader();
-            edition = loader.load(this, name, forClass);
-            if (edition == null)
-                throw new IllegalStateException("last edition reported newerAvailable(), but can't load");
+            // only load the template once
+            if (loadedRenderer == null)
+            {
+                if (getDynamic())
+                {
+                    loadedRenderer = new DynamicRenderer(this, name, forClass);
+                }
+                else
+                {
+                    final MustacheLoader loader = getLoader();
+                    final MustacheEdition edition = loader.load(this, name, forClass);
+                    loadedRenderer = edition.getRenderer();
+                }
+            }
 
             // clone the map
             @SuppressWarnings("unchecked")
-            final HashMap<Pair<String, Class<?>>, MustacheEdition> cacheMapClone =
-                    (HashMap<Pair<String, Class<?>>, MustacheEdition>)cacheMap.clone();
+            final HashMap<Pair<String, Class<?>>, MustacheRenderer> cacheMapClone =
+                    (HashMap<Pair<String, Class<?>>, MustacheRenderer>)cacheMap.clone();
 
             // add the renderer to the cloned map
-            cacheMapClone.put(cacheKey, edition);
+            cacheMapClone.put(cacheKey, loadedRenderer);
 
             // try to replace the modified hashmap; return if we succeed
             if (cacheRef.compareAndSet(cacheMap, cacheMapClone))
-                return edition;
+                return loadedRenderer;
         }
     }
 }

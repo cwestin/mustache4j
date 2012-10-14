@@ -34,7 +34,8 @@ public class DynamicRenderer
                 break;
 
             // get the latest edition, and try to swap it in
-            final MustacheEdition newEdition = services.getEdition(templateName, forClass);
+            final MustacheLoader loader = services.getLoader();
+            final MustacheEdition newEdition = loader.load(services, templateName, forClass);
             if (editionRef.compareAndSet(edition, newEdition))
             {
                 edition = newEdition;

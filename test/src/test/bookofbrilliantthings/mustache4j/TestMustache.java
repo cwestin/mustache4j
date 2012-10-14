@@ -665,19 +665,17 @@ public class TestMustache
         try
         {
             final M4 m4 = new M4();
-            MustacheEdition edition;
 
             // prepare to load some stuff; simulate this coming from a file system or similar
             cacheTestLoader.templateMap.put("outer", new VersionedTemplate("outer", 1));
             cacheTestLoader.templateMap.put("inner", new VersionedTemplate("showList:{{showList}}\n", 1));
 
-            edition = services.getEdition("outer", M4.class);
-            testObject(edition.getRenderer(), m4, "outer");
+            final MustacheRenderer outerRenderer = services.getRenderer("outer", M4.class);
+            testObject(outerRenderer, m4, "outer");
 
             // put in a new version of the outer template, and see if we get it
             cacheTestLoader.templateMap.put("outer", new VersionedTemplate("outer\n{{> inner}}", 2));
-            edition = services.getEdition("outer", M4.class);
-            testObject(edition.getRenderer(), m4, "outer\nshowList:false\n");
+            testObject(outerRenderer, m4, "outer\nshowList:false\n");
         }
         catch(Exception e)
         {
