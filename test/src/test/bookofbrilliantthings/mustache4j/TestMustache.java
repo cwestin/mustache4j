@@ -621,7 +621,8 @@ public class TestMustache
     private static class CacheTestLoader
         implements MustacheLoader
     {
-        final HashMap<String, VersionedTemplate> templateMap;
+        // this is to simulate a file system with write dates
+        final HashMap<String, VersionedTemplate> templateMap; // "filename" -> <"contents", "write date">
 
         CacheTestLoader()
         {
@@ -644,6 +645,7 @@ public class TestMustache
             @Override
             public boolean newerAvailable()
             {
+                // answer yes if there's a "file" with a later write date
                 final VersionedTemplate vTemplate = templateMap.get(name);
                 return (vTemplate.version > version);
             }
