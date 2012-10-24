@@ -22,6 +22,8 @@ public class JarLoader
             throws MustacheParserException
     {
         final InputStream inputStream = classLoader.getResourceAsStream(name);
+        if (inputStream == null)
+            throw new MustacheParserException("couldn't open class loader resource stream \"" + name + "\"");
         final Reader reader = new InputStreamReader(inputStream, charset);
         final MustacheRenderer renderer = Mustache.compile(services, reader, forClass);
         return new MustacheEdition(renderer);
