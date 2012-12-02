@@ -38,7 +38,7 @@ public abstract class IterableRenderer
     }
 
     public abstract Object getIterable(Object o)
-        throws Exception;
+            throws Exception;
 
     @Override
     public void render(SwitchableWriter writer, ObjectStack objectStack)

@@ -30,6 +30,10 @@ public abstract class ConditionalSectionRenderer
             throws Exception
     {
         if (getCondition(objectStack.peekAt(objectDepth)) ^ inverted)
+        {
+            objectStack.repush();
             objectRenderer.render(writer, objectStack);
+            objectStack.pop();
+        }
     }
 }

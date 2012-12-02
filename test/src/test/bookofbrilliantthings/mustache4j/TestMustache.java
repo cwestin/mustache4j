@@ -369,6 +369,41 @@ public class TestMustache
         }
     }
 
+    @Test
+    public void testScoping()
+    {
+        try
+        {
+            final M2 m2 = new M2();
+            m2.pi = Math.PI;
+            m2.hasPi = true;
+
+            final M3 m3 = new M3();
+            m3.m2 = m2;
+            m3.flubber = 'x';
+
+            final String template1 = "{{#f2}}{{#hazPi}}{{flubber}}{{/hazPi}}{{/f2}}";
+            final MustacheRenderer r1 =
+                    Mustache.compile(mustacheServices, new StringReader(template1), M3.class);
+            testObject(r1, m3, "x");
+
+            final M4 m4 = new M4();
+            m4.showList = true;
+            m4.listM2 = new LinkedList<M2>();
+            m4.listM2.add(m2);
+            m4.listM2.add(m2);
+
+            final String template2 = "{{#listM2}}{{#hazPi}}{{showList}}\n{{/hazPi}}{{/listM2}}";
+            final MustacheRenderer r2 =
+                    Mustache.compile(mustacheServices, new StringReader(template2), M4.class);
+            testObject(r2, m4, "true\ntrue\n");
+        }
+        catch(Exception e)
+        {
+            fail(e.toString());
+        }
+    }
+
     public static class M5
     {
         @MustacheValue

@@ -38,13 +38,16 @@ public abstract class ObjectSectionRenderer
                 return;
 
             objectStack.push(value);
-            objectRenderer.render(writer, objectStack);
-            objectStack.pop();
         }
         else
         {
-            if (value == null)
-                objectRenderer.render(writer, objectStack);
+            if (value != null)
+                return;
+
+            objectStack.repush();
         }
+
+        objectRenderer.render(writer, objectStack);
+        objectStack.pop();
     }
 }

@@ -28,6 +28,10 @@ public abstract class StringSectionRenderer
         final String s = getString(objectStack.peekAt(objectDepth));
 
         if ((s != null) ^ inverted)
+        {
+            objectStack.repush();
             objectRenderer.render(writer, objectStack);
+            objectStack.pop();
+        }
     }
 }

@@ -13,7 +13,13 @@ public class ObjectStack
 
     public void push(Object o)
     {
+        assert o != null;
         objectStack.add(o);
+    }
+
+    public void repush()
+    {
+        push(peekAt(0));
     }
 
     public void pop()
