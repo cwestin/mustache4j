@@ -30,12 +30,12 @@ public class ObjectHandler
     }
 
     ObjectHandler(final LinkedList<FragmentRenderer> fragmentList, boolean inverted,
-            ValueSource valueSource, Class<? extends FragmentRenderer> rendererClass,
+            ValueReference valueReference, Class<? extends FragmentRenderer> rendererClass,
             StackingParserHandler stackingParserHandler, MustacheServices mustacheServices,
             Class<?> forClass)
         throws MustacheParserException
     {
-        super(fragmentList, inverted, valueSource, rendererClass, stackingParserHandler, mustacheServices);
+        super(fragmentList, inverted, valueReference, rendererClass, stackingParserHandler, mustacheServices);
         this.forClass = forClass;
         valueNameMap = new HashMap<String, ValueSource>();
 
@@ -97,7 +97,7 @@ public class ObjectHandler
         throws MustacheParserException
     {
         final ValueReference valueReference = findValue(varName);
-        addFragment(valueReference.valueSource.createVariableRenderer(true));
+        addFragment(valueReference.valueSource.createVariableRenderer(valueReference.stackDepth, true));
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ObjectHandler
         if (pt == PrimitiveType.BOOLEAN)
         {
             final ObjectHandler objectHandler =
-                    new ObjectHandler(fragmentList, inverted, valueSource,
+                    new ObjectHandler(fragmentList, inverted, valueReference,
                             valueSource.getConditionalRendererClass(), stackingParserHandler,
                             mustacheServices, forClass);
 
@@ -128,7 +128,7 @@ public class ObjectHandler
         if (pt == PrimitiveType.STRING)
         {
             final ObjectHandler objectHandler =
-                    new ObjectHandler(fragmentList, inverted, valueSource,
+                    new ObjectHandler(fragmentList, inverted, valueReference,
                             valueSource.getStringSectionRendererClass(), stackingParserHandler,
                             mustacheServices, forClass);
 
@@ -154,15 +154,12 @@ public class ObjectHandler
                 // the instantiated type
 
                 final ObjectHandler objectHandler =
-                        new ObjectHandler(fragmentList, inverted, valueSource,
+                        new ObjectHandler(fragmentList, inverted, valueReference,
                                 valueSource.getIterableRendererClass(), stackingParserHandler,
                                 mustacheServices, iteratedClass);
                 stackingParserHandler.push(objectHandler);
                 return;
             }
-
-            // check for HashMap<String, T>
-            // TODO
 
             // check for arrays
             // TODO
@@ -171,7 +168,7 @@ public class ObjectHandler
             // TODO detect these
 
             final ObjectHandler objectHandler =
-                    new ObjectHandler(fragmentList, inverted, valueSource,
+                    new ObjectHandler(fragmentList, inverted, valueReference,
                             valueSource.getObjectRendererClass(), stackingParserHandler, mustacheServices,
                             (inverted ? forClass : valueType));
             stackingParserHandler.push(objectHandler);
@@ -195,7 +192,7 @@ public class ObjectHandler
         throws MustacheParserException
     {
         final ValueReference valueReference = findValue(varName);
-        addFragment(valueReference.valueSource.createVariableRenderer(false));
+        addFragment(valueReference.valueSource.createVariableRenderer(valueReference.stackDepth, false));
     }
 
     @Override

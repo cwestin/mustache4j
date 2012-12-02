@@ -4,19 +4,20 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 
 public class StringMethodSectionRenderer
-    extends StringSectionRenderer
+        extends StringSectionRenderer
 {
     private final Method method;
 
-    public StringMethodSectionRenderer(LinkedList<FragmentRenderer> fragmentList, boolean inverted, Method method)
+    public StringMethodSectionRenderer(LinkedList<FragmentRenderer> fragmentList, int objectDepth,
+            boolean inverted, Method method)
     {
-        super(fragmentList, inverted, method.getDeclaringClass());
+        super(fragmentList, objectDepth, inverted, method.getDeclaringClass());
         this.method = method;
     }
 
     @Override
     public String getString(Object o)
-        throws Exception
+            throws Exception
     {
         final Object s = method.invoke(o, (Object []) null);
         if (s != null)

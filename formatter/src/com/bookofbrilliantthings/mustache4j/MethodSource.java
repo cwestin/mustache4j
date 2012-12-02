@@ -29,9 +29,9 @@ public class MethodSource
     }
 
     @Override
-    public VariableRenderer createVariableRenderer(boolean escaped)
+    public VariableRenderer createVariableRenderer(int objectDepth, boolean escaped)
     {
-        return new MethodReturnRenderer(escaped, method);
+        return new MethodReturnRenderer(objectDepth, escaped, method);
     }
 
     @Override
@@ -54,13 +54,13 @@ public class MethodSource
 
     @Override
     public <T extends FragmentRenderer> T createRenderer(
-            Class<T> rendererClass, LinkedList<FragmentRenderer> fragmentList, boolean inverted)
+            Class<T> rendererClass, LinkedList<FragmentRenderer> fragmentList, int objectDepth, boolean inverted)
         throws MustacheParserException
     {
         try
         {
-            Constructor<T> ctor = rendererClass.getConstructor(LinkedList.class, boolean.class, Method.class);
-            T fragmentRenderer = ctor.newInstance(fragmentList, inverted, method);
+            Constructor<T> ctor = rendererClass.getConstructor(LinkedList.class, int.class, boolean.class, Method.class);
+            T fragmentRenderer = ctor.newInstance(fragmentList, objectDepth, inverted, method);
             return fragmentRenderer;
         }
         catch(NoSuchMethodException nsme)

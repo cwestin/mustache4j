@@ -5,15 +5,16 @@ import java.util.LinkedList;
 import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 public abstract class StringSectionRenderer
-    implements FragmentRenderer
+    extends StackingRenderer
 {
-    private final ObjectRenderer objectRenderer;
+    private final ListRenderer objectRenderer;
     private final boolean inverted;
 
-    protected StringSectionRenderer(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted,
-            Class<?> forClass)
+    protected StringSectionRenderer(final LinkedList<FragmentRenderer> fragmentList,
+            final int objectDepth, final boolean inverted, Class<?> forClass)
     {
-        objectRenderer = new ObjectRenderer(fragmentList, forClass);
+        super(objectDepth);
+        objectRenderer = new ListRenderer(fragmentList, forClass);
         this.inverted = inverted;
     }
 
@@ -21,12 +22,12 @@ public abstract class StringSectionRenderer
         throws Exception;
 
     @Override
-    public void render(final SwitchableWriter writer, final Object o)
-        throws Exception
+    public void render(final SwitchableWriter writer, final ObjectStack objectStack)
+            throws Exception
     {
-        final String s = getString(o);
+        final String s = getString(objectStack.peekAt(objectDepth));
 
         if ((s != null) ^ inverted)
-            objectRenderer.render(writer, o);
+            objectRenderer.render(writer, objectStack);
     }
 }

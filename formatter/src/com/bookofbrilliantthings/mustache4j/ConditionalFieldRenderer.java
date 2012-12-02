@@ -8,10 +8,10 @@ public class ConditionalFieldRenderer
 {
     private final Field field;
 
-    public ConditionalFieldRenderer(final LinkedList<FragmentRenderer> fragmentList, final boolean inverted,
-            final Field booleanField)
+    public ConditionalFieldRenderer(final LinkedList<FragmentRenderer> fragmentList,
+            final int objectDepth, final boolean inverted, final Field booleanField)
     {
-        super(fragmentList, inverted, booleanField.getType(), booleanField.getDeclaringClass());
+        super(fragmentList, objectDepth, inverted, booleanField.getType(), booleanField.getDeclaringClass());
         this.field = booleanField;
     }
 

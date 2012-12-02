@@ -8,10 +8,10 @@ public class IterableMethodRenderer
 {
     private final Method method;
 
-    public IterableMethodRenderer(LinkedList<FragmentRenderer> fragmentList,
+    public IterableMethodRenderer(LinkedList<FragmentRenderer> fragmentList, int objectDepth,
             boolean inverted, Method method)
     {
-        super(fragmentList, inverted, method.getGenericReturnType());
+        super(fragmentList, objectDepth, inverted, method.getGenericReturnType());
         this.method = method;
     }
 

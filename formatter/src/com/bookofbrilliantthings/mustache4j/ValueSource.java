@@ -20,7 +20,7 @@ public abstract class ValueSource
     public abstract Class<?> getType();
     public abstract Type getGenericType();
 
-    public abstract FragmentRenderer createVariableRenderer(boolean escaped);
+    public abstract FragmentRenderer createVariableRenderer(int objectDepth, boolean escaped);
 
     public abstract Class<? extends FragmentRenderer> getObjectRendererClass();
     public abstract Class<? extends FragmentRenderer> getConditionalRendererClass();
@@ -28,6 +28,6 @@ public abstract class ValueSource
     public abstract Class<? extends FragmentRenderer> getIterableRendererClass();
 
     public abstract <T extends FragmentRenderer> T createRenderer(Class<T> rendererClass,
-            LinkedList<FragmentRenderer> fragmentList, boolean inverted)
-        throws MustacheParserException;
+            LinkedList<FragmentRenderer> fragmentList, int objectDepth, boolean inverted)
+            throws MustacheParserException;
 }

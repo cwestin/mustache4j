@@ -13,12 +13,11 @@ public abstract class MustacheRenderer
     {
         final HtmlEscapeWriter htmlEscapeWriter = new HtmlEscapeWriter(writer);
         final SwitchableWriter switchableWriter = new SwitchableWriter(writer, htmlEscapeWriter);
-        render(switchableWriter, o);
+        final ObjectStack objectStack = new ObjectStack();
+        objectStack.push(o);
+        render(switchableWriter, objectStack);
 
         // flush the filter, if it hasn't been flushed since it's last write
         switchableWriter.setFiltered(false);
     }
-
-    public abstract void render(SwitchableWriter switchableWriter, Object o)
-        throws Exception;
 }

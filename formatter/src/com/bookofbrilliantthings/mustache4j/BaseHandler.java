@@ -7,19 +7,19 @@ public abstract class BaseHandler
 {
     final private LinkedList<FragmentRenderer> fragmentList;
     final private boolean inverted;
-    final private ValueSource valueSource;
+    private final ValueReference valueReference;
     final private Class<? extends FragmentRenderer> rendererClass;
     final protected StackingParserHandler stackingParserHandler;
     final protected MustacheServices mustacheServices;
     protected Locator locator;
 
     protected BaseHandler(LinkedList<FragmentRenderer> fragmentList, boolean inverted,
-            ValueSource valueSource, Class<? extends FragmentRenderer> rendererClass,
+            ValueReference valueReference, Class<? extends FragmentRenderer> rendererClass,
             StackingParserHandler stackingParserHandler, MustacheServices mustacheServices)
     {
         this.fragmentList = fragmentList;
         this.inverted = inverted;
-        this.valueSource = valueSource;
+        this.valueReference = valueReference;
         this.rendererClass = rendererClass;
         this.stackingParserHandler = stackingParserHandler;
         this.mustacheServices = mustacheServices;
@@ -44,7 +44,8 @@ public abstract class BaseHandler
     protected void pop()
             throws MustacheParserException
     {
-        stackingParserHandler.pop(valueSource.createRenderer(rendererClass, fragmentList, inverted));
+        stackingParserHandler.pop(valueReference.valueSource.createRenderer(
+                rendererClass, fragmentList, valueReference.stackDepth, inverted));
     }
 
     @Override

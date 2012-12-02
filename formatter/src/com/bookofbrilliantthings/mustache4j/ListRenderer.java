@@ -5,23 +5,23 @@ import java.util.List;
 
 import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
-public class BasicRenderer
+public class ListRenderer
     implements FragmentRenderer
 {
     private final List<FragmentRenderer> fragmentList;
 
-    public BasicRenderer(List<FragmentRenderer> fragmentList)
+    public ListRenderer(List<FragmentRenderer> fragmentList, Class<?> forClass)
     {
         this.fragmentList = new ArrayList<FragmentRenderer>(fragmentList); // clone into an array
     }
 
     @Override
-    public void render(SwitchableWriter writer, Object o)
+    public void render(SwitchableWriter writer, ObjectStack objectStack)
         throws Exception
     {
         for(FragmentRenderer renderer : fragmentList)
         {
-            renderer.render(writer, o);
+            renderer.render(writer, objectStack);
         }
     }
 }

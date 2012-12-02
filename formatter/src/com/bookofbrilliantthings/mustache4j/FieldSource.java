@@ -29,9 +29,9 @@ public class FieldSource
     }
 
     @Override
-    public VariableRenderer createVariableRenderer(boolean escaped)
+    public VariableRenderer createVariableRenderer(int objectDepth, boolean escaped)
     {
-        return new FieldRenderer(escaped, field);
+        return new FieldRenderer(objectDepth, escaped, field);
     }
 
     @Override
@@ -54,13 +54,13 @@ public class FieldSource
 
     @Override
     public <T extends FragmentRenderer> T createRenderer(
-            Class<T> rendererClass, LinkedList<FragmentRenderer> fragmentList, boolean inverted)
+            Class<T> rendererClass, LinkedList<FragmentRenderer> fragmentList, int objectDepth, boolean inverted)
         throws MustacheParserException
     {
         try
         {
-            Constructor<T> ctor = rendererClass.getConstructor(LinkedList.class, boolean.class, Field.class);
-            T fragmentRenderer = ctor.newInstance(fragmentList, inverted, field);
+            Constructor<T> ctor = rendererClass.getConstructor(LinkedList.class, int.class, boolean.class, Field.class);
+            T fragmentRenderer = ctor.newInstance(fragmentList, objectDepth, inverted, field);
             return fragmentRenderer;
         }
         catch(NoSuchMethodException nsme)

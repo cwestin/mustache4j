@@ -5,19 +5,21 @@ import java.util.LinkedList;
 import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 public abstract class ObjectSectionRenderer
-    implements FragmentRenderer
+    extends StackingRenderer
 {
-    private final ObjectRenderer objectRenderer;
+    private final ListRenderer objectRenderer;
     private final boolean inverted;
 
-    public ObjectSectionRenderer(final LinkedList<FragmentRenderer> fragmentList,
+    public ObjectSectionRenderer(final LinkedList<FragmentRenderer> fragmentList, final int objectDepth,
             final boolean inverted, final Class<?> valueClass, final Class<?> containerClass)
     {
+        super(objectDepth);
+
         final PrimitiveType primitiveType = PrimitiveType.getSwitchType(valueClass);
         if (primitiveType != PrimitiveType.OBJECT)
             throw new IllegalArgumentException("section renderer can only operate on non-primitive types");
 
-        objectRenderer = new ObjectRenderer(fragmentList, (inverted ? containerClass : valueClass));
+        objectRenderer = new ListRenderer(fragmentList, (inverted ? containerClass : valueClass));
         this.inverted = inverted;
     }
 
@@ -25,22 +27,24 @@ public abstract class ObjectSectionRenderer
         throws Exception;
 
     @Override
-    public void render(final SwitchableWriter writer, final Object o)
-        throws Exception
+    public void render(final SwitchableWriter writer, final ObjectStack objectStack)
+            throws Exception
     {
-        final Object value = getValue(o);
+        final Object value = getValue(objectStack.peekAt(objectDepth));
 
         if (!inverted)
         {
             if (value == null)
                 return;
 
-            objectRenderer.render(writer, value);
+            objectStack.push(value);
+            objectRenderer.render(writer, objectStack);
+            objectStack.pop();
         }
         else
         {
             if (value == null)
-                objectRenderer.render(writer, o);
+                objectRenderer.render(writer, objectStack);
         }
     }
 }

@@ -8,9 +8,10 @@ public class IterableFieldRenderer
 {
     private final Field field;
 
-    public IterableFieldRenderer(LinkedList<FragmentRenderer> fragmentList, boolean inverted, Field field)
+    public IterableFieldRenderer(LinkedList<FragmentRenderer> fragmentList, int objectDepth,
+            boolean inverted, Field field)
     {
-        super(fragmentList, inverted, field.getGenericType());
+        super(fragmentList, objectDepth, inverted, field.getGenericType());
         this.field = field;
     }
 

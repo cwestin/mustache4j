@@ -7,9 +7,9 @@ public class MethodReturnRenderer
 {
     private final Method method;
 
-    public MethodReturnRenderer(boolean escaped, Method method)
+    public MethodReturnRenderer(int objectDepth, boolean escaped, Method method)
     {
-        super(escaped, method.getReturnType());
+        super(objectDepth, escaped, method.getReturnType());
         this.method = method;
     }
 

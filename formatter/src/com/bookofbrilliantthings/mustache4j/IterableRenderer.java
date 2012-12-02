@@ -8,12 +8,14 @@ import java.util.LinkedList;
 import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 public abstract class IterableRenderer
-    implements FragmentRenderer
+    extends StackingRenderer
 {
-    private final ObjectRenderer objectRenderer;
+    private final ListRenderer objectRenderer;
 
-    public IterableRenderer(LinkedList<FragmentRenderer> fragmentList, boolean inverted, Type type)
+    public IterableRenderer(LinkedList<FragmentRenderer> fragmentList, int objectDepth, boolean inverted, Type type)
     {
+        super(objectDepth);
+
         assert !inverted; // not allowed for lists
 
         final ParameterizedType pType = (ParameterizedType)type;
@@ -32,17 +34,17 @@ public abstract class IterableRenderer
          */
         assert argTypes.length == 1;
 
-        this.objectRenderer = new ObjectRenderer(fragmentList, (Class<?>)argTypes[0]);
+        this.objectRenderer = new ListRenderer(fragmentList, (Class<?>)argTypes[0]);
     }
 
     public abstract Object getIterable(Object o)
         throws Exception;
 
     @Override
-    public void render(SwitchableWriter writer, Object o)
+    public void render(SwitchableWriter writer, ObjectStack objectStack)
             throws Exception
     {
-        final Object i = getIterable(o);
+        final Object i = getIterable(objectStack.peekAt(objectDepth));
         if (i == null)
             return;
 
@@ -51,7 +53,9 @@ public abstract class IterableRenderer
         while(iterator.hasNext())
         {
             final Object io = iterator.next();
-            objectRenderer.render(writer, io);
+            objectStack.push(io);
+            objectRenderer.render(writer, objectStack);
+            objectStack.pop();
         }
     }
 }

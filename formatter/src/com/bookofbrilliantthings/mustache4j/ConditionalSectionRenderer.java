@@ -5,18 +5,20 @@ import java.util.LinkedList;
 import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 public abstract class ConditionalSectionRenderer
-    implements FragmentRenderer
+        extends StackingRenderer
 {
-    private final ObjectRenderer objectRenderer;
+    private final ListRenderer objectRenderer;
     private final boolean inverted;
 
     protected ConditionalSectionRenderer(final LinkedList<FragmentRenderer> fragmentList,
-            final boolean inverted, Class<?> conditionClass, Class<?> forClass)
+            final int objectDepth, final boolean inverted, Class<?> conditionClass, Class<?> forClass)
     {
+        super(objectDepth);
+
         if (!conditionClass.equals(boolean.class) && !conditionClass.equals(Boolean.class))
             throw new IllegalArgumentException("conditional section can only operate on boolean or Boolean");
 
-        objectRenderer = new ObjectRenderer(fragmentList, forClass);
+        objectRenderer = new ListRenderer(fragmentList, forClass);
         this.inverted = inverted;
     }
 
@@ -24,10 +26,10 @@ public abstract class ConditionalSectionRenderer
         throws Exception;
 
     @Override
-    public void render(final SwitchableWriter writer, final Object o)
-        throws Exception
+    public void render(final SwitchableWriter writer, final ObjectStack objectStack)
+            throws Exception
     {
-        if (getCondition(o) ^ inverted)
-            objectRenderer.render(writer, o);
+        if (getCondition(objectStack.peekAt(objectDepth)) ^ inverted)
+            objectRenderer.render(writer, objectStack);
     }
 }

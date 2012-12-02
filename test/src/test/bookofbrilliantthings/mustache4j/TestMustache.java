@@ -331,7 +331,7 @@ public class TestMustache
     }
 
     @Test
-    public void testLists()
+    public void testIterable()
     {
         final String template1 = "{{#showList}}{{#listM2}}{{pi}}\n{{/listM2}}{{/showList}}";
 

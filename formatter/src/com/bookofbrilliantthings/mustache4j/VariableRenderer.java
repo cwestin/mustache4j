@@ -4,12 +4,14 @@ import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 
 public abstract class VariableRenderer
-    implements FragmentRenderer
+    extends StackingRenderer
 {
     private final boolean escaped;
 
-    protected VariableRenderer(boolean escaped, Class<?> forClass)
+    protected VariableRenderer(int objectDepth, boolean escaped, Class<?> forClass)
     {
+        super(objectDepth);
+
         // this constructor is really more for type checking than anything else
         final PrimitiveType primitiveType = PrimitiveType.getSwitchType(forClass);
         if (primitiveType == PrimitiveType.OBJECT)
@@ -23,10 +25,10 @@ public abstract class VariableRenderer
         throws Exception;
 
     @Override
-    public void render(final SwitchableWriter writer, final Object o)
+    public void render(final SwitchableWriter writer, final ObjectStack objectStack)
         throws Exception
     {
-        final Object value = getValue(o);
+        final Object value = getValue(objectStack.peekAt(objectDepth));
         if (value != null)
         {
             final boolean on = writer.setFiltered(escaped);

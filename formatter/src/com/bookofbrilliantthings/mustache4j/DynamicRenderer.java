@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.bookofbrilliantthings.mustache4j.util.SwitchableWriter;
 
 public class DynamicRenderer
-    extends MustacheRenderer
+        extends MustacheRenderer
 {
     private final String templateName;
     private final Class<?> forClass;
@@ -21,7 +21,7 @@ public class DynamicRenderer
     }
 
     @Override
-    public void render(SwitchableWriter switchableWriter, Object o)
+    public void render(SwitchableWriter switchableWriter, ObjectStack objectStack)
             throws Exception
     {
         MustacheEdition edition = null;
@@ -44,6 +44,6 @@ public class DynamicRenderer
         }
 
         final MustacheRenderer renderer = edition.getRenderer();
-        renderer.render(switchableWriter, o);
+        renderer.render(switchableWriter, objectStack);
     }
 }

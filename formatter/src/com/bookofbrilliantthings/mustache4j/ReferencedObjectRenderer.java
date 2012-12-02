@@ -8,10 +8,10 @@ public class ReferencedObjectRenderer
 {
     private final Field field;
 
-    public ReferencedObjectRenderer(final LinkedList<FragmentRenderer> fragmentList,
+    public ReferencedObjectRenderer(final LinkedList<FragmentRenderer> fragmentList, final int objectDepth,
             final boolean inverted, final Field field)
     {
-        super(fragmentList, inverted, field.getType(), field.getDeclaringClass());
+        super(fragmentList, objectDepth, inverted, field.getType(), field.getDeclaringClass());
         this.field = field;
     }
 

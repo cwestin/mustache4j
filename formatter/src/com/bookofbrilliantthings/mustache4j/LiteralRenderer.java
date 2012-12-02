@@ -13,7 +13,7 @@ public class LiteralRenderer
     }
 
     @Override
-    public void render(final SwitchableWriter writer, final Object o)
+    public void render(final SwitchableWriter writer, final ObjectStack objectStack)
         throws Exception
     {
         // in order to write this without escaping, use the original writer
