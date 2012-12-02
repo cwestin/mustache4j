@@ -2,13 +2,13 @@ package com.bookofbrilliantthings.mustache4j;
 
 import java.util.LinkedList;
 
-public class BaseHandler
+public abstract class BaseHandler
     extends StackableParserHandler
 {
-    final protected LinkedList<FragmentRenderer> fragmentList;
-    final protected boolean inverted;
-    final protected ValueSource valueSource;
-    final protected Class<? extends FragmentRenderer> rendererClass;
+    final private LinkedList<FragmentRenderer> fragmentList;
+    final private boolean inverted;
+    final private ValueSource valueSource;
+    final private Class<? extends FragmentRenderer> rendererClass;
     final protected StackingParserHandler stackingParserHandler;
     final protected MustacheServices mustacheServices;
     protected Locator locator;
@@ -23,6 +23,28 @@ public class BaseHandler
         this.rendererClass = rendererClass;
         this.stackingParserHandler = stackingParserHandler;
         this.mustacheServices = mustacheServices;
+    }
+
+    protected ValueReference findValue(String valueName)
+            throws MustacheParserException
+    {
+        final ValueReference valueReference = stackingParserHandler.findValue(valueName);
+        if (valueReference == null)
+            throw new MustacheParserException(locator,
+                    "no MustacheValue named '" + valueName + "' found in current object stack");
+
+        return valueReference;
+    }
+
+    protected void addFragment(FragmentRenderer fragmentRenderer)
+    {
+        fragmentList.add(fragmentRenderer);
+    }
+
+    protected void pop()
+            throws MustacheParserException
+    {
+        stackingParserHandler.pop(valueSource.createRenderer(rendererClass, fragmentList, inverted));
     }
 
     @Override

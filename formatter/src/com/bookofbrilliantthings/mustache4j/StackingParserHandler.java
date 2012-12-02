@@ -16,7 +16,7 @@ public class StackingParserHandler
 
     public void push(StackableParserHandler parserHandler)
     {
-        handlerStack.addFirst(topHandler);
+        handlerStack.addFirst(parserHandler);
         topHandler = parserHandler;
 
         if (locator != null)
@@ -25,11 +25,28 @@ public class StackingParserHandler
 
     public void pop(final FragmentRenderer fragmentRenderer)
     {
-        if (handlerStack.size() == 1)
+        if (handlerStack.size() == 0)
             throw new IllegalStateException();
 
-        topHandler = handlerStack.removeFirst();
+        handlerStack.removeFirst();
+        topHandler = handlerStack.peekFirst();
         topHandler.resume(fragmentRenderer);
+    }
+
+    public ValueReference findValue(String valueName)
+    {
+        int stackDepth = 0;
+        for(StackableParserHandler handler : handlerStack)
+        {
+            final ValueSource valueSource = handler.getValueSource(valueName);
+            if (valueSource != null)
+                return new ValueReference(valueSource, stackDepth);
+
+            ++stackDepth;
+        }
+
+        // if we get here, we didn't find it
+        return null;
     }
 
     @Override

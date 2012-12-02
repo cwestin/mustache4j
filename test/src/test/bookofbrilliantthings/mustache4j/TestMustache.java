@@ -187,15 +187,6 @@ public class TestMustache
 
         try
         {
-/* TODO See Mustache.java
-            final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
-            hashMap1.put("foo", "a");
-            hashMap1.put("bar", new Integer(3));
-
-            final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
-            testHashMap(mustacheRendererH1, hashMap1, template1, "    a     3  ");
-*/
-
             final M1 m1 = new M1();
             m1.xfoo = "&";
             m1.bar = 3;
@@ -243,18 +234,6 @@ public class TestMustache
 
         try
         {
-/* TODO See Mustache.java
-            final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
-            final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
-
-            testHashMap(mustacheRendererH1, hashMap1, template1, "");
-
-            hashMap1.put("hazPi", Boolean.TRUE);
-            hashMap1.put("pi", new Double(Math.PI));
-
-            testHashMap(mustacheRendererH1, hashMap1, template1, Double.toString(Math.PI));
-*/
-
             final M2 m2 = new M2();
             final MustacheRenderer mustacheRendererM2 =
                     Mustache.compile(mustacheServices, new StringReader(template1), M2.class);
@@ -310,18 +289,6 @@ public class TestMustache
 
         try
         {
-/* TODO See Mustache.java
-            final HashMap<String, Object> hashMap1 = new HashMap<String, Object>();
-            final MustacheRenderer mustacheRendererH1 = Mustache.compileForHashMap(new StringReader(template1));
-
-            testHashMap(mustacheRendererH1, hashMap1, template1, "");
-
-            hashMap1.put("hazPi", Boolean.TRUE);
-            hashMap1.put("pi", new Double(Math.PI));
-
-            testHashMap(mustacheRendererH1, hashMap1, template1, Double.toString(Math.PI));
-*/
-
             final MustacheRenderer mustacheRenderer1 =
                     Mustache.compile(mustacheServices, new StringReader(template1), M3.class);
             final MustacheRenderer mustacheRenderer2 =

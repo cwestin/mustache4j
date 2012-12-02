@@ -11,7 +11,7 @@ import java.util.LinkedList;
 public class ObjectHandler
     extends BaseHandler
 {
-    protected final HashMap<String, ValueSource> valueNameMap;
+    private final HashMap<String, ValueSource> valueNameMap;
     protected final Class<?> forClass;
 
     private static String getBeanName(final String methodName, final Class<?> forClass)
@@ -87,27 +87,27 @@ public class ObjectHandler
     }
 
     @Override
+    public ValueSource getValueSource(String valueName)
+    {
+        return valueNameMap.get(valueName);
+    }
+
+    @Override
     public void variable(String varName)
         throws MustacheParserException
     {
-        if (!valueNameMap.containsKey(varName))
-            throw new MustacheParserException(locator,
-                    "no MustacheValue named '" + varName + "' in object");
-
-        final ValueSource valueSource = valueNameMap.get(varName);
-        fragmentList.add(valueSource.createVariableRenderer(true));
+        final ValueReference valueReference = findValue(varName);
+        addFragment(valueReference.valueSource.createVariableRenderer(true));
     }
 
     @Override
     public void sectionBegin(String secName, boolean inverted)
         throws MustacheParserException
     {
-        if (!valueNameMap.containsKey(secName))
-            throw new MustacheParserException(locator,
-                    "no MustacheValue named '" + secName + "' in object");
+        final ValueReference valueReference = findValue(secName);
+        final ValueSource valueSource = valueReference.valueSource;
 
         // gather information we need to decide what to instantiate
-        final ValueSource valueSource = valueNameMap.get(secName);
         final Class<?> valueType = valueSource.getType();
         final PrimitiveType pt = PrimitiveType.getSwitchType(valueType);
 
@@ -187,19 +187,15 @@ public class ObjectHandler
     public void sectionEnd(String secName)
         throws MustacheParserException
     {
-        stackingParserHandler.pop(valueSource.createRenderer(rendererClass, fragmentList, inverted));
+        pop();
     }
 
     @Override
     public void unescaped(final String varName)
         throws MustacheParserException
     {
-        if (!valueNameMap.containsKey(varName))
-            throw new MustacheParserException(locator,
-                    "no MustacheValue named '" + varName + "' in object");
-
-        final ValueSource valueSource = valueNameMap.get(varName);
-        fragmentList.add(valueSource.createVariableRenderer(false));
+        final ValueReference valueReference = findValue(varName);
+        addFragment(valueReference.valueSource.createVariableRenderer(false));
     }
 
     @Override
@@ -207,6 +203,6 @@ public class ObjectHandler
         throws MustacheParserException
     {
         final MustacheRenderer renderer = mustacheServices.getRenderer(partialName, forClass);
-        fragmentList.add(renderer);
+        addFragment(renderer);
     }
 }
