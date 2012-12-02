@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 
@@ -167,6 +168,17 @@ public class ObjectHandler
             {
                 setupIteration(secName, Iterable.class, valueReference, valueSource.getIterableRendererClass(),
                         fragmentList, inverted);
+                return;
+            }
+
+            if (Iterator.class.isAssignableFrom(valueType))
+            {
+                final Class<? extends FragmentRenderer> rendererClass = valueSource.getIteratorRendererClass();
+                if (rendererClass == null)
+                    throw new MustacheParserException(locator, "section \"" + secName +
+                            "\": using an Iterator<>-valued field is not allowed");
+
+                setupIteration(secName, Iterable.class, valueReference, rendererClass, fragmentList, inverted);
                 return;
             }
 

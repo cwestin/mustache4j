@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -328,40 +329,51 @@ public class TestMustache
 
         @MustacheValue
         public List<M2> listM2;
+
+        @MustacheValue
+        public Iterator<M2> getM2Iterator()
+        {
+            return listM2.iterator();
+        }
     }
 
     @Test
     public void testIterable()
     {
         final String template1 = "{{#showList}}{{#listM2}}{{pi}}\n{{/listM2}}{{/showList}}";
+        final String template2 = "{{#showList}}{{#m2Iterator}}{{pi}}\n{{/m2Iterator}}{{/showList}}";
 
         try
         {
-            final MustacheRenderer mustacheRenderer =
-                    Mustache.compile(mustacheServices, new StringReader(template1), M4.class);
+            final MustacheRenderer r1 = Mustache.compile(mustacheServices, new StringReader(template1), M4.class);
+            final MustacheRenderer r2 = Mustache.compile(mustacheServices, new StringReader(template2), M4.class);
 
             final M4 m4 = new M4();
 
             // start out without even showing the list
-            testObject(mustacheRenderer, m4, "");
+            testObject(r1, m4, "");
 
             // now try showing the list, but the list doesn't exist, so we still should see nothing
             m4.showList = true;
-            testObject(mustacheRenderer, m4, "");
+            testObject(r1, m4, "");
 
             // add a list, but leave it empty
             m4.listM2 = new LinkedList<M2>();
-            testObject(mustacheRenderer, m4, "");
+            testObject(r1, m4, "");
 
             // now put things on the list
+            final String result1 = Double.toString(Math.PI) + "\n" + Double.toString(Math.E) + "\n";
+
             M2 m2 = new M2();
             m2.pi = Math.PI;
             m4.listM2.add(m2);
             m2 = new M2();
             m2.pi = Math.E;
             m4.listM2.add(m2);
-            testObject(mustacheRenderer, m4,
-                    Double.toString(Math.PI) + "\n" + Double.toString(Math.E) + "\n");
+            testObject(r1, m4, result1);
+
+            // try it with an iterator instead of an iterable
+            testObject(r2, m4, result1);
         }
         catch(Exception e)
         {
