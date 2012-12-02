@@ -52,6 +52,19 @@ public class MethodSource
         return StringMethodSectionRenderer.class;
     }
 
+
+    @Override
+    public Class<? extends FragmentRenderer> getIterableRendererClass()
+    {
+        return IterableMethodRenderer.class;
+    }
+
+    @Override
+    public Class<? extends FragmentRenderer> getIteratorRendererClass()
+    {
+        return IteratorMethodRenderer.class;
+    }
+
     @Override
     public <T extends FragmentRenderer> T createRenderer(
             Class<T> rendererClass, LinkedList<FragmentRenderer> fragmentList, int objectDepth, boolean inverted)
@@ -73,11 +86,5 @@ public class MethodSource
             throw new MustacheParserException(null, "could not instantiate renderer of class " +
                     rendererClass.getName(), e);
         }
-    }
-
-    @Override
-    public Class<? extends FragmentRenderer> getIterableRendererClass()
-    {
-        return IterableMethodRenderer.class;
     }
 }

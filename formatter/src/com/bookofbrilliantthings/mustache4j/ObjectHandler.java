@@ -100,6 +100,30 @@ public class ObjectHandler
         addFragment(valueReference.valueSource.createVariableRenderer(valueReference.stackDepth, true));
     }
 
+    private void setupIteration(final String secName, final Class<?> sourceClass,
+            final ValueReference valueReference, final Class<? extends FragmentRenderer> rendererClass,
+            final LinkedList<FragmentRenderer> fragmentList, final boolean inverted)
+            throws MustacheParserException
+    {
+        if (inverted)
+            throw new MustacheParserException(locator, "section \"" + secName +
+                    "\" can't be inverted because it's an " + sourceClass.getName());
+
+        final ParameterizedType iterableType = (ParameterizedType)valueReference.valueSource.getGenericType();
+        final Type argTypes[] = iterableType.getActualTypeArguments();
+        if (!(argTypes[0] instanceof Class<?>))
+            throw new MustacheParserException(locator, "section \"" + secName +
+                    "\" " + sourceClass.getName() + " type parameter must be concrete");
+        final Class<?> iteratedClass = (Class<?>)argTypes[0];
+        // TODO later, we can chase it up the declarations if it's a TypeVariable, and get
+        // the instantiated type
+
+        final ObjectHandler objectHandler =
+                new ObjectHandler(fragmentList, inverted, valueReference,
+                        rendererClass, stackingParserHandler, mustacheServices, iteratedClass);
+        stackingParserHandler.push(objectHandler);
+    }
+
     @Override
     public void sectionBegin(String secName, boolean inverted)
         throws MustacheParserException
@@ -141,23 +165,8 @@ public class ObjectHandler
             // check for Iterable<T>
             if (Iterable.class.isAssignableFrom(valueType))
             {
-                if (inverted)
-                    throw new MustacheParserException(locator, "section \"" + secName +
-                            "\" can't be inverted, because it's an Iterable<?>");
-
-                final ParameterizedType iterableType = (ParameterizedType)valueSource.getGenericType();
-                final Type argTypes[] = iterableType.getActualTypeArguments();
-                if (!(argTypes[0] instanceof Class<?>))
-                    throw new MustacheParserException(locator, "Iterable type parameter must be concrete");
-                final Class<?> iteratedClass = (Class<?>)argTypes[0];
-                // TODO later, we can chase it up the declarations if it's a TypeVariable, and get
-                // the instantiated type
-
-                final ObjectHandler objectHandler =
-                        new ObjectHandler(fragmentList, inverted, valueReference,
-                                valueSource.getIterableRendererClass(), stackingParserHandler,
-                                mustacheServices, iteratedClass);
-                stackingParserHandler.push(objectHandler);
+                setupIteration(secName, Iterable.class, valueReference, valueSource.getIterableRendererClass(),
+                        fragmentList, inverted);
                 return;
             }
 

@@ -52,6 +52,26 @@ public class FieldSource
         return StringFieldSectionRenderer.class;
     }
 
+
+    @Override
+    public Class<? extends FragmentRenderer> getIterableRendererClass()
+    {
+        return IterableFieldRenderer.class;
+    }
+
+    @Override
+    public Class<? extends FragmentRenderer> getIteratorRendererClass()
+    {
+        /*
+         * This isn't allowed.
+         *
+         * If it were, it would be possible to get into trouble if the iterator member is referenced
+         * more than once, because the iterator can only cycle through its values once, after which it
+         * will fail (or throw IllegalStateException).
+         */
+        return null;
+    }
+
     @Override
     public <T extends FragmentRenderer> T createRenderer(
             Class<T> rendererClass, LinkedList<FragmentRenderer> fragmentList, int objectDepth, boolean inverted)
@@ -73,11 +93,5 @@ public class FieldSource
             throw new MustacheParserException(null, "could not instantiate renderer of class " +
                     rendererClass.getName(), e);
         }
-    }
-
-    @Override
-    public Class<? extends FragmentRenderer> getIterableRendererClass()
-    {
-        return IterableFieldRenderer.class;
     }
 }
