@@ -1,7 +1,7 @@
 # To use this spec file, copy the jar and the LICENSE.txt file to the SOURCES
 # subdirectly of the rpmbuild directory. cd to the rpmbuild directory, and
 # then issue
-# rpmbuild --define "_topdir `pwd`" -bb SPECS/mustache4j-0.9.spec
+# rpmbuild --define "_topdir `pwd`" -bb SPECS/mustache4j.spec
 
 # Unfortunately, even for noarch builds, a build on a 64-bit host uses lib64
 # for _lib. Technically this is correct, as data should go in _datadir, which
@@ -11,7 +11,7 @@
 
 Summary: Java implementation of a Mustache template engine
 Name: mustache4j
-Version: 0.9.0
+Version: 0.10.0
 Release: 1
 License: Apache
 URL: http://github.com/cwestin/mustache4j
